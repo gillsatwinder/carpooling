@@ -1,7 +1,18 @@
 version: "3.9"
 
 services:
-
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: carpool_frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+    environment:
+      VITE_API_URL: http://localhost:8080
   # -----------------------
   # PostgreSQL Database
   # -----------------------
@@ -32,9 +43,13 @@ services:
     depends_on:
       - postgres
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=studentcarpool;Username=postgres;Password=postgres
-
+      NODE_ENV: development
+      PORT: 8080
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: studentcarpool
+      DB_USER: postgres
+      DB_PASSWORD: postgres
   # -----------------------
   # Optional DB UI Tool
   # -----------------------
