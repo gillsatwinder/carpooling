@@ -4,22 +4,14 @@ export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [onboardingDone, setOnboardingDone] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() =>
+  !!localStorage.getItem("token")
+);
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    const savedOnboarding = localStorage.getItem("onboarding");
-
-    if (savedToken) {
-      setToken(savedToken);
-      setIsAuthenticated(true);
-    }
-
-    if (savedOnboarding === "true") {
-      setOnboardingDone(true);
-    }
-  }, []);
+const [onboardingDone, setOnboardingDone] = useState(() =>
+  localStorage.getItem("onboarding") === "true"
+);
+ 
 
   const login = (jwtToken) => {
     localStorage.setItem("token", jwtToken);
