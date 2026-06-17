@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("token");
     localStorage.removeItem("onboarding");
     setToken(null);
-    setOnboardingDone(false);
+
   };
 
 

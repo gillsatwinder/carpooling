@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { submitOnboarding } from "../hooks/user.hooks";
-import { useAuth } from "../context/useAuth";
+
 
 export default function Onboarding() {
   const [form, setForm] = useState({
