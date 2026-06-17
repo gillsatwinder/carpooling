@@ -4,7 +4,9 @@ import Register from "../pages/Register";
 import Onboarding from "../pages/Onboarding";
 import Home from "../pages/Landing/Home";
 
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
+
+/*
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth();
@@ -15,6 +17,7 @@ function ProtectedRoute({ children }) {
 
   return children;
 }
+*/
 
 function OnboardingRoute({ children }) {
   const { isAuthenticated, onboardingDone } = useAuth();
