@@ -14,7 +14,7 @@ export default function Onboarding() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const { completeOnboarding } = useAuth();
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -34,7 +34,7 @@ export default function Onboarding() {
     try {
       await submitOnboarding(form);
 
-      completeOnboarding();
+      
       navigate("/dashboard");
     } catch (err) {
       setError(err?.message || "Failed to complete onboarding");

@@ -3,10 +3,7 @@ import { AuthContext } from "./AuthContext";
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem("token"));
-  const [onboardingDone, setOnboardingDone] = useState(() =>
-    localStorage.getItem("onboarding") === "true"
-  );
-
+  
   const isAuthenticated = !!token;
 
   const login = (jwtToken) => {
@@ -21,20 +18,16 @@ export function AuthProvider({ children }) {
     setOnboardingDone(false);
   };
 
-  const completeOnboarding = () => {
-    localStorage.setItem("onboarding", "true");
-    setOnboardingDone(true);
-  };
+
 
   return (
     <AuthContext.Provider
       value={{
         token,
         isAuthenticated,
-        onboardingDone,
+        
         login,
         logout,
-        completeOnboarding,
       }}
     >
       {children}
