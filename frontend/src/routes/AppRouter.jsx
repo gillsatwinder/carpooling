@@ -6,7 +6,6 @@ import Home from "../pages/Landing/Home";
 
 import { useAuth } from "../context/useAuth";
 
-/*
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth();
@@ -17,21 +16,8 @@ function ProtectedRoute({ children }) {
 
   return children;
 }
-*/
 
-function OnboardingRoute({ children }) {
-  const { isAuthenticated, onboardingDone } = useAuth();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/register" replace />;
-  }
-
-  if (onboardingDone) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  return children;
-}
 
 export default function AppRouter() {
   return (
@@ -45,9 +31,9 @@ export default function AppRouter() {
         <Route
           path="/onboarding"
           element={
-            <OnboardingRoute>
+            <ProtectedRoute>
               <Onboarding />
-            </OnboardingRoute>
+            </ProtectedRoute>
           }
         />
 
