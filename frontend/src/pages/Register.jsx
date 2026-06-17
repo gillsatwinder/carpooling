@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../hooks/auth.hooks";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import { motion } from "framer-motion";
 
 export default function Register() {
