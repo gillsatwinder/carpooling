@@ -22,11 +22,11 @@ const User = sequelize.define('User', {
   },
   sex: {
     type: DataTypes.ENUM('M', 'F', 'Other'),
-    allowNull: false,
+    allowNull: true,
   },
   graduation_date: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true,
   },
   created_at: {
     type: DataTypes.DATE,
