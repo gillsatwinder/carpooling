@@ -1,4 +1,4 @@
-const authService = require("../services/auth.service");
+const authService = require("../services/auth.services");
 const { success, error } = require("../utils/response");
 const signupValidator = require("../validators/auth.validators");
 const register = async (req, res) => {
