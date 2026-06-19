@@ -8,25 +8,27 @@ const findByEmail = async (email) => {
 
 const findById = async (id) => {
   return await User.findByPk(id, {
-    attributes: ["id", "name", "email", "sex", "graduation_date", "created_at"],
+    attributes: ["id", "name", "email", "age","sex", "graduation_date", "created_at"],
   });
 };
 
-const create = async ({ name, email, password, sex, graduation_date }) => {
+const create = async ({ name, email, password, age, sex, graduation_date }) => {
   return await User.create({
     name,
     email,
     password,
+    age,
     sex,
     graduation_date,
   });
 };
 
-const update = async (id, { name, email, sex, graduation_date }) => {
+const update = async (id, { name, email, age, sex, graduation_date }) => {
   return await User.update(
     {
       name,
       email,
+      age,
       sex,
       graduation_date,
     },

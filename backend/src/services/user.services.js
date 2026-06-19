@@ -21,6 +21,8 @@ const updateProfile = async (userId, data) => {
   return updatedUser;
 };
 
+
+
 const deleteProfile = async (userId) => {
   const deletedUser = await userRepository.remove(userId);
 
