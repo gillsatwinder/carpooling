@@ -1,5 +1,5 @@
-const userRepository = require("../repositories/user.repository");
-const { findByEmail } = require("../repositories/user.repositoties");
+const userRepository = require("../repositories/user.repositoties");
+
 
 const getProfile = async (email) => {
   const user = await userRepository.findByEmail(email);
