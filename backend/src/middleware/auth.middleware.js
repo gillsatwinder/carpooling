@@ -1,11 +1,12 @@
 const jwt = require("jsonwebtoken");
 
-const SECRET_KEY = process.env.JWT_SECRET; // store in .env, never hardcode
+const SECRET_KEY = process.env.JWT_SECRET || "super_secret_key" // store in .env, never hardcode
 
 const authenticateToken = (req, res, next) => {
   // Token usually comes in: Authorization: Bearer <token>
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1]; // extract after "Bearer"
+
 
   if (!token) {
     return res.status(401).json({ error: "Access denied. No token provided." });

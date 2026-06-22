@@ -8,10 +8,12 @@ const completeOnboarding = async (req, res) => {
 
       // Validate required fields
     if (!sex || !age || !graduation_date) {
-      return res.status(400).json(
-        error("Sex, age, and graduation_date are required")
-      );
-    }
+      return error(
+    res,
+    400,
+    "Sex, age, and graduation_date are required"
+  );
+}
 
     const updatedUser = await userService.updateProfile(userId, {
       sex,
@@ -19,11 +21,14 @@ const completeOnboarding = async (req, res) => {
       graduation_date,
     });
 
-    return res.status(200).json(
-      success("Onboarding completed successfully", updatedUser)
+    return success(
+      res,
+      200,
+      "Onboarding completed successfully",
+      updatedUser
     );
   } catch (err) {
-    return res.status(400).json(error(err.message));
+     return error(res, 400, err.message);
   }
 };
 
@@ -36,7 +41,7 @@ const getProfile = async (req, res) => {
       success("User profile retrieved", user)
     );
   } catch (err) {
-    return res.status(400).json(error(err.message));
+    return error(res, 400, err.message);
   }
 };
 

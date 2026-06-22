@@ -17,7 +17,10 @@ const signup = async ({ email, name, password }) => {
     password: hashedPassword,
   });
   const token = jwt.sign(
-    { user },
+    {
+    id: user.id,
+    email: user.email
+  },
     process.env.JWT_SECRET || 'super_secret_key',
   { expiresIn: '10m'}
   );
