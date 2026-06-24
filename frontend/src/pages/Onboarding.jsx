@@ -8,7 +8,7 @@ export default function Onboarding() {
     fullName: "",
     age: "",
     sex: "",
-    graduationDate: "",
+    graduation_date: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -82,15 +82,15 @@ export default function Onboarding() {
             className="border rounded-lg p-3"
           >
             <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+            <option value="Other">Other</option>
           </select>
 
           <input
-            name="graduationDate"
+            name="graduation_date"
             type="date"
-            value={form.graduationDate}
+            value={form.graduation_date}
             onChange={handleChange}
             className="border rounded-lg p-3"
           />

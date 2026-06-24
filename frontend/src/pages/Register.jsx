@@ -5,6 +5,7 @@ import { useAuth } from "../context/useAuth";
 import { motion } from "framer-motion";
 
 export default function Register() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -20,17 +21,16 @@ export default function Register() {
     setError("");
 
     try {
-      const res = await registerUser({ email, password });
-
-      if (res?.token) {
-        login(res.token);
+      const res = await registerUser({ email, password, name });
+     console.log(res);
+      const token = res?.data?.token;
+      if (token) {
+        login(token);
       }
-
-      if (res?.onboardingRequired) {
-        navigate("/onboarding");
-      } else {
-        navigate("/dashboard");
-      }
+ 
+    
+      navigate("/onboarding");
+     
     } catch (err) {
       const msg = err?.message || "";
 
@@ -47,16 +47,13 @@ export default function Register() {
   };
 
   return (
-       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-blue-50 px-4">
-
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-blue-50 px-4">
       <motion.div
         initial={{ opacity: 0, y: 20, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl p-8 border border-gray-100"
       >
-
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -71,8 +68,16 @@ export default function Register() {
           </p>
         </motion.div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <motion.input
+            whileFocus={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            type="text"
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
 
           <motion.input
             whileFocus={{ scale: 1.02 }}
@@ -113,7 +118,6 @@ export default function Register() {
             </motion.p>
           )}
         </form>
-
       </motion.div>
     </div>
   );

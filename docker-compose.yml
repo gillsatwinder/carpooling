@@ -13,6 +13,10 @@ services:
       - api
     environment:
       VITE_API_URL: http://localhost:8080
+      CHOKIDAR_USEPOLLING: true
+      WATCHPACK_POLLING: true
+    command: npm run dev -- --host 0.0.0.0
+
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -53,6 +57,9 @@ services:
       DB_NAME: studentcarpool
       DB_USER: postgres
       DB_PASSWORD: postgres
+      CHOKIDAR_USEPOLLING: true
+      WATCHPACK_POLLING: true
+    
     volumes:
       - ./backend:/app
       - /app/node_modules

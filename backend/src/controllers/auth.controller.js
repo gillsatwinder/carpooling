@@ -1,6 +1,6 @@
 const authService = require("../services/auth.services");
 const { success, error } = require("../utils/response");
-const {signupValidator} = require("../validators/auth.validators");
+const {signupValidator, signinvalidator} = require("../validators/auth.validators");
 const register = async (req, res) => {
     const result = signupValidator(req.body)
 
@@ -17,7 +17,23 @@ const register = async (req, res) => {
   }
 };
 
+const login = async( req, res) => {
+  const result = signinvalidator(req.body)
+
+  if (result.error){
+          return error(res,400, result.error)
+      }
+  try { 
+      const result = await authService.login(req.body);
+
+      return success(res, 201, "User Login successfully", result);
+    } catch (err) {
+      return error(res, 400, err.message);
+    }
+  
+}
 
 module.exports = {
-  register
+  register,
+  login
 };

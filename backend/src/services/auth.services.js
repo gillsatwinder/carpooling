@@ -32,21 +32,30 @@ const signup = async ({ email, name, password }) => {
 
 
 
-const login = async ({ email, password }) => {
+const login = async ({ email, password}) => {
   const user = await userRepository.findByEmail(email);
 
   if (!user) {
     throw new Error("Invalid email or password");
   }
+ // const hashedPassword = await hashPassword(password);
 
   const isPasswordValid = await comparePassword(password, user.password);
 
   if (!isPasswordValid) {
     throw new Error("Invalid email or password");
   }
-
+  const token = jwt.sign(
+    {
+    id: user.id,
+    email: user.email
+  },
+    process.env.JWT_SECRET || 'super_secret_key',
+  { expiresIn: '1h'}
+  );
 
   return {
+    token:token,
     user: {
       id: user.id,
       name: user.name,

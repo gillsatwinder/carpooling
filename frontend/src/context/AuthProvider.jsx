@@ -7,6 +7,7 @@ export function AuthProvider({ children }) {
   const isAuthenticated = !!token;
 
   const login = (jwtToken) => {
+   
     localStorage.setItem("token", jwtToken);
     setToken(jwtToken);
   };
