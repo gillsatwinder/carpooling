@@ -12,6 +12,7 @@ function ProtectedRoute({ children }) {
 
   if (!isAuthenticated) {
     return <Navigate to="/register" replace />;
+  
   }
 
   return children;
