@@ -45,6 +45,11 @@ const login = async ({ email, password}) => {
   if (!isPasswordValid) {
     throw new Error("Invalid email or password");
   }
+
+  const onboarded =
+    !user.sex ||
+    !user.age ||
+    !user.graduationDate;
   const token = jwt.sign(
     {
     id: user.id,
@@ -56,6 +61,7 @@ const login = async ({ email, password}) => {
 
   return {
     token:token,
+    onboarded: onboarded,
     user: {
       id: user.id,
       name: user.name,
