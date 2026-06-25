@@ -6,3 +6,10 @@ export async function registerUser({ email, password, name}) {
     body: JSON.stringify({ email, password,name}),
   });
 }
+
+export async function loginUser({ email, password }) {
+  return await fetchClient("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+}
