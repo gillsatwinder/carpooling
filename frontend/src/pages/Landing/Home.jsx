@@ -51,25 +51,21 @@ export default function Home() {
         </motion.p>
 
         {/* CTA */}
-        <div className="mt-8 flex justify-center gap-4 flex-wrap">
-
+        <div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center">
           <button
-            onClick={() => navigate("/rides/create")}
-            className="bg-purple-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 hover:bg-purple-700"
+            onClick={() => navigate("/login")}
+          className="px-8 py-3 rounded-lg bg-purple-600 text-white font-semibold hover:bg-purple-700 transition duration-200 shadow-md"
           >
-            <Car size={18} />
-            Post Ride
+            Login
           </button>
 
           <button
-            onClick={() => navigate("/rides/search")}
-            className="bg-white border px-6 py-3 rounded-xl flex items-center gap-2 hover:bg-gray-100"
+            onClick={() => navigate("/register")}
+            className="px-8 py-3 rounded-lg border border-purple-600 text-purple-600 font-semibold hover:bg-purple-100 transition"
           >
-            <Search size={18} />
-            Find Ride
+            Sign Up
           </button>
-
-        </div>
+      </div>
       </div>
 
       {/* TRUST BANNER */}
