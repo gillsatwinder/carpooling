@@ -3,20 +3,39 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Register from "../pages/Register";
 import Onboarding from "../pages/Onboarding";
 import Home from "../pages/Landing/Home";
-
+import Login from "../pages/login";
 import { useAuth } from "../context/useAuth";
 
 
-function ProtectedRoute({ children }) {
-  const { isAuthenticated } = useAuth();
+function OnboardingRoute({ children }) {
+  const { isAuthenticated, onboarded } = useAuth();
 
   if (!isAuthenticated) {
-    return <Navigate to="/register" replace />;
-  
+    return <Navigate to="/login" replace />;
+  }
+
+  if (onboarded) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
 }
+/*
+### For dashboard route 
+function ProtectedRoute({ children }) {
+  const { isAuthenticated, onboarded } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!onboarded) {
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  return children;
+}
+  */
 
 
 
@@ -27,14 +46,16 @@ export default function AppRouter() {
 
         {/* Public Route */}
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        
 
         {/* Onboarding (only after login, before completion) */}
         <Route
           path="/onboarding"
           element={
-            <ProtectedRoute>
+            <OnboardingRoute>
               <Onboarding />
-            </ProtectedRoute>
+            </OnboardingRoute>
           }
         />
 

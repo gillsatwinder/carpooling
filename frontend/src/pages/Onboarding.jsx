@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { submitOnboarding } from "../hooks/user.hooks";
+import {useAuth} from "../context/useAuth";
 
 
 export default function Onboarding() {
@@ -16,6 +17,7 @@ export default function Onboarding() {
 
 
   const navigate = useNavigate();
+  const { completeOnboarding } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,7 +36,7 @@ export default function Onboarding() {
     try {
       await submitOnboarding(form);
 
-      
+      completeOnboarding();
       navigate("/dashboard");
     } catch (err) {
       setError(err?.message || "Failed to complete onboarding");
