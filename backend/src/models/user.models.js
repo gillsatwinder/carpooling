@@ -32,13 +32,12 @@ const User = sequelize.define('User', {
     type: DataTypes.DATE,
     allowNull: true,
   },
-  created_at: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
+  
 }, {
   timestamps: false,
   tableName: 'users',
+  createdAt: "created_at",
+  updatedAt: "updated_at",
 });
 
 module.exports = User;

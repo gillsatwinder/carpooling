@@ -39,16 +39,20 @@ app.use((err, req, res, next) => {
 
 // Sync database and start server
 const PORT = process.env.PORT || 5000;
-sequelize.authenticate()
-  .then(() => console.log('Database connected successfully'))
-  .catch((err) => console.log('Database connection error:', err));
+async function startServer() {
+  try {
+    await sequelize.authenticate();
+    console.log("Database connected successfully");
 
-sequelize.sync({ alter: true }).then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}).catch((err) => {
-  console.log('Database sync error:', err);
-});
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("Database connection error:", err);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 module.exports = app;
