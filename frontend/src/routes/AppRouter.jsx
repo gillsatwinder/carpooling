@@ -5,7 +5,9 @@ import Onboarding from "../pages/Onboarding";
 import Home from "../pages/Landing/Home";
 import Login from "../pages/login";
 import { useAuth } from "../context/useAuth";
-
+import Dashboard from "../pages/Dashboard";
+import AppLayout from "../layouts/AppLayout";
+import RideManagement from "../pages/RideManagement";
 
 function OnboardingRoute({ children }) {
   const { isAuthenticated, onboarded } = useAuth();
@@ -20,8 +22,7 @@ function OnboardingRoute({ children }) {
 
   return children;
 }
-/*
-### For dashboard route 
+// For dashboard route 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, onboarded } = useAuth();
 
@@ -35,7 +36,7 @@ function ProtectedRoute({ children }) {
 
   return children;
 }
-  */
+
 
 
 
@@ -60,15 +61,27 @@ export default function AppRouter() {
         />
 
         {/* Dashboard (fully protected) */}
-       {/* <Route
+       <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
+              <AppLayout>
               <Dashboard />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
-        */}
+
+        <Route
+          path="/ride-management"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <RideManagement />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />  
 
         {/* Default redirect */}
         <Route path="/" element={<Home />} />
