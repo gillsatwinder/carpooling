@@ -1,5 +1,5 @@
 const express = require('express');
-const sequelize = require('./config/database');
+const db = require('./models');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -21,10 +21,12 @@ app.use(cors({
 // Import routes
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
+const postRoutes = require('./routes/posts.routes');
 
 // Routes
 app.use('/auth', authRoutes);
 app.use('/user',userRoutes);
+app.use('/posts', postRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -41,7 +43,7 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 async function startServer() {
   try {
-    await sequelize.authenticate();
+    await db.sequelize.authenticate();
     console.log("Database connected successfully");
 
     app.listen(PORT, () => {
