@@ -23,17 +23,16 @@ const create = async ({ name, email, password, age, sex, graduation_date }) => {
   });
 };
 
-const update = async (id, { name, email, age, sex, graduation_date }) => {
+const update = async (email, { name, age, sex, graduation_date }) => {
   return await User.update(
     {
       name,
-      email,
       age,
       sex,
       graduation_date,
     },
     {
-      where: { id },
+      where: { email },
       returning: true,
     }
   );

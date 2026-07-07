@@ -11,8 +11,8 @@ const getProfile = async (email) => {
   return user;
 };
 
-const updateProfile = async (userId, data) => {
-  const updatedUser = await userRepository.update(userId, data);
+const updateProfile = async (email, data) => {
+  const updatedUser = await userRepository.update(email, data);
 
   if (!updatedUser) {
     throw new Error("User not found");
