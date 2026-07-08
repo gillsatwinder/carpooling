@@ -44,10 +44,18 @@ const remove = async (id) => {
   });
 };
 
+const updateById = async (id, data) => {
+  return await User.update(data, {
+    where: { id },
+    returning: true,
+  });
+};
+
 module.exports = {
   findByEmail,
   findById,
   create,
   update,
   remove,
+  updateById,
 };

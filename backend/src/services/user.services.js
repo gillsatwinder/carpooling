@@ -21,6 +21,16 @@ const updateProfile = async (email, data) => {
   return updatedUser;
 };
 
+const updateProfileById = async (userId, data) => {
+  const updatedUser = await userRepository.updateById(userId, data);
+
+  if (!updatedUser) {
+    throw new Error("User not found");
+  }
+
+  return updatedUser;
+};  
+
 
 
 const deleteProfile = async (userId) => {
@@ -37,4 +47,5 @@ module.exports = {
   getProfile,
   updateProfile,
   deleteProfile,
+  updateProfileById,
 };

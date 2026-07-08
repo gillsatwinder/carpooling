@@ -16,7 +16,7 @@ const completeOnboarding = async (req, res) => {
   );
 }
 
-    const updatedUser = await userService.updateProfile(userId, {
+    const updatedUser = await userService.updateProfileById(userId, {
       sex,
       age,
       graduation_date,
