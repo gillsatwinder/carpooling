@@ -37,10 +37,31 @@ const getProfile = async (req, res) => {
   try {
     const useremail = req.user.email;
     const user = await userService.getProfile(useremail)
-    return res.status(200).json(
-      success("User profile retrieved", user)
+    return success(
+      res,
+      200,
+      "User profile retrieved",
+       user
     );
   } catch (err) {
+    return error(res, 400, err.message);
+  }
+};
+
+const updateProfile = async(req, res )=> {
+  try {
+    const useremail= req.user.email;
+
+    const {email,password, ...updates}= req.body;
+    const user = await userService.updateProfile(useremail, updates);
+    return success(
+      res,
+      200,
+      "user profile updated", 
+      user
+    );
+  }
+  catch(err) {
     return error(res, 400, err.message);
   }
 };
@@ -48,4 +69,5 @@ const getProfile = async (req, res) => {
 module.exports = {
   completeOnboarding,
   getProfile,
+  updateProfile,
 };
