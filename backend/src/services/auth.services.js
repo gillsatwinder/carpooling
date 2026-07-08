@@ -1,4 +1,4 @@
-const userRepository = require("../repositories/user.repositoties");
+const userRepository = require("../repositories/user.repository");
 const jwt = require('jsonwebtoken');
 const { hashPassword, comparePassword } = require("../utils/password");
 
@@ -47,9 +47,9 @@ const login = async ({ email, password}) => {
   }
 
   const onboarded =
-    !user.sex ||
-    !user.age ||
-    !user.graduationDate;
+  !!user.sex &&
+  !!user.age &&
+  !!user.graduation_date;
   const token = jwt.sign(
     {
     id: user.id,

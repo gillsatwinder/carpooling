@@ -1,5 +1,5 @@
 const express = require('express');
-const sequelize = require('./config/database');
+const db = require('./models');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -21,10 +21,12 @@ app.use(cors({
 // Import routes
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
+const postRoutes = require('./routes/posts.routes');
 
 // Routes
 app.use('/auth', authRoutes);
 app.use('/user',userRoutes);
+app.use('/posts', postRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -39,16 +41,20 @@ app.use((err, req, res, next) => {
 
 // Sync database and start server
 const PORT = process.env.PORT || 5000;
-sequelize.authenticate()
-  .then(() => console.log('Database connected successfully'))
-  .catch((err) => console.log('Database connection error:', err));
+async function startServer() {
+  try {
+    await db.sequelize.authenticate();
+    console.log("Database connected successfully");
 
-sequelize.sync({ alter: true }).then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}).catch((err) => {
-  console.log('Database sync error:', err);
-});
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("Database connection error:", err);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 module.exports = app;
