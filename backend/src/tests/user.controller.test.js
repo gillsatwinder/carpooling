@@ -117,10 +117,10 @@ describe("User Controller", () => {
 
       userService.getProfile.mockResolvedValue(user);
 
-      success.mockReturnValue({
-        message: "User profile retrieved",
-        data: user,
-      });
+    //  success.mockReturnValue({
+     //   message: "User profile retrieved",
+     //   data: user,
+     // });
 
       await getProfile(req, res);
 
@@ -129,12 +129,12 @@ describe("User Controller", () => {
       );
 
       expect(success).toHaveBeenCalledWith(
+        res,
+        200,
         "User profile retrieved",
         user
       );
 
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalled();
     });
 
     it("should return 400 when service throws error", async () => {
