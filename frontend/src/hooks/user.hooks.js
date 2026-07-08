@@ -33,7 +33,7 @@ export async function updatePost(postId, data) {
 }
 
 export async function cancelPost(postId) {
-  return await fetchClient(`/posts/${postId}`, {
-    method: "DELETE",
+  return await fetchClient(`/posts/${postId}/cancel`, {
+    method: "PATCH",
   });
 }
