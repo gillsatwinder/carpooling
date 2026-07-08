@@ -37,3 +37,9 @@ export async function cancelPost(postId) {
     method: "PATCH",
   });
 }
+
+export async function closePost(postId) {
+  return await fetchClient(`/posts/${postId}/close`, {
+    method: "PATCH",
+  });
+} 

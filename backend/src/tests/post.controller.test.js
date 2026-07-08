@@ -192,4 +192,35 @@ describe("Post Controller", () => {
       });
     });
   });
+
+  describe("closePost", () => {
+    it("should close a post", async () => {
+      const closedPost = {
+        id: 1,
+        status: "CLOSED",
+      };
+
+      req.params.id = 1;
+
+      postService.closePost.mockResolvedValue(closedPost);
+
+      await postController.closePost(req, res);
+
+      expect(postService.closePost).toHaveBeenCalledWith(1, 1);
+      expect(res.json).toHaveBeenCalledWith(closedPost);
+    });
+
+    it("should return 500 if service throws", async () => {
+      req.params.id = 1;
+
+      postService.closePost.mockRejectedValue(new Error("Database Error"));
+
+      await postController.closePost(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Database Error",
+      });
+    });
+  });
 });

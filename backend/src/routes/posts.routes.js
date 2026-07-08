@@ -22,4 +22,7 @@ router.put("/:id", authenticateToken, postController.updatePost);
 // Cancel post
 router.patch("/:id/cancel", authenticateToken, postController.cancelPost);
 
+//close post
+router.patch("/:id/close", authenticateToken, postController.closePost);
+
 module.exports = router;
