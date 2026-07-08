@@ -8,6 +8,7 @@ import { useAuth } from "../context/useAuth";
 import Dashboard from "../pages/Dashboard";
 import AppLayout from "../layouts/AppLayout";
 import RideManagement from "../pages/RideManagement";
+import Profile from "../pages/Profile";
 
 function OnboardingRoute({ children }) {
   const { isAuthenticated, onboarded } = useAuth();
@@ -67,6 +68,17 @@ export default function AppRouter() {
             <ProtectedRoute>
               <AppLayout>
               <Dashboard />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+
+         <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+              <Profile/>
               </AppLayout>
             </ProtectedRoute>
           }
