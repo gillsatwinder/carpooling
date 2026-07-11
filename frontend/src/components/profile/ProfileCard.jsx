@@ -1,5 +1,13 @@
 import { motion } from "framer-motion";
-import { User, Camera, Pencil, Check, X, Loader2, FileText } from "lucide-react";
+import {
+  User,
+  Pencil,
+  Check,
+  X,
+  Loader2,
+  FileText,
+} from "lucide-react";
+
 import ProfileField from "./ProfileField";
 
 export default function ProfileCard({
@@ -13,9 +21,6 @@ export default function ProfileCard({
   onEdit,
   onCancel,
   onSave,
-  onAvatarClick,
-  onAvatarChange,
-  fileInputRef,
   fields,
 }) {
   return (
@@ -25,58 +30,39 @@ export default function ProfileCard({
       transition={{ delay: 0.2 }}
       className="mt-8 bg-white rounded-xl shadow-sm p-8"
     >
+      {/* Profile Header */}
       <div className="flex flex-col items-center">
-        <div
-          onClick={onAvatarClick}
-          className={`relative w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden border-2 border-purple-200 ${
-            isEditing ? "cursor-pointer" : ""
-          }`}
-        >
-          {draft.avatarUrl || profile.avatarUrl ? (
-            <img
-              src={draft.avatarUrl || profile.avatarUrl}
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <User className="text-purple-400" size={36} />
-          )}
-
-          {isEditing && (
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-              <Camera className="text-white" size={20} />
-            </div>
-          )}
+        {/* Default user icon */}
+        <div className="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center border-2 border-purple-200">
+          <User className="text-purple-400" size={36} />
         </div>
 
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={onAvatarChange}
-          className="hidden"
-        />
-
+        {/* User Name */}
         <p className="mt-3 text-lg font-semibold text-gray-900">
           {draft.name || profile.name || "Your Name"}
         </p>
+
+        {/* University */}
         <p className="text-sm text-gray-500">
           {draft.university || profile.university}
         </p>
       </div>
 
+      {/* Error Message */}
       {error && (
         <div className="mt-6 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2 text-center">
           {error}
         </div>
       )}
 
+      {/* Success Message */}
       {successMsg && !isEditing && (
         <div className="mt-6 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-2 text-center">
           {successMsg}
         </div>
       )}
 
+      {/* Profile Fields */}
       <div className="mt-8 space-y-5">
         {fields.map(({ key, label, icon: Icon, type }) => (
           <ProfileField
@@ -91,6 +77,7 @@ export default function ProfileCard({
           />
         ))}
 
+        {/* Bio */}
         <ProfileField
           label="Bio"
           icon={FileText}
@@ -103,6 +90,7 @@ export default function ProfileCard({
         />
       </div>
 
+      {/* Action Buttons */}
       <div className="mt-8 flex justify-center gap-3">
         {isEditing ? (
           <>
@@ -125,6 +113,7 @@ export default function ProfileCard({
               ) : (
                 <Check size={16} />
               )}
+
               {saving ? "Saving..." : "Save Changes"}
             </button>
           </>

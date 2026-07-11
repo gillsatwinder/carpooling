@@ -1,66 +1,76 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Loader2, User, Mail, Phone, GraduationCap } from "lucide-react";
+import { Loader2, User, Mail, GraduationCap } from "lucide-react";
 import ProfileCard from "../components/profile/ProfileCard";
+import { getProfile, updateProfile } from "../hooks/user.hooks";
+import { logout } from "../hooks/auth.hooks";
 
-// TODO: point these at your real backend routes
-const PROFILE_ENDPOINT = "/api/user/profile";
-const AVATAR_ENDPOINT = "/api/user/profile/avatar";
-
+// Default profile object.
+// These values are used before data is loaded from the backend.
 const initialProfile = {
   name: "",
   email: "",
-  phone: "",
   university: "",
   bio: "",
-  avatarUrl: "",
 };
 
-const Profile =() => {
+const Profile = () => {
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
 
+  // Controls whether the form is editable.
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
+  // Stores the saved profile from the backend.
   const [profile, setProfile] = useState(initialProfile);
+  // Stores the user's edits before they are saved.
   const [draft, setDraft] = useState(initialProfile);
 
+  // Fetch profile once when the component loads.
   useEffect(() => {
     fetchProfile();
   }, []);
 
+  // Fetch profile data from the backend.
   async function fetchProfile() {
     setLoading(true);
     setError("");
+
     try {
-      const res = await fetch(PROFILE_ENDPOINT, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
+      const response = await getProfile();
+       const data = response.data;
+      // Merge backend data with default values.
+      // This prevents missing fields from becoming undefined.
+      const profileData = {
+        ...initialProfile,
+        ...data,
+      };
 
-      if (!res.ok) throw new Error("Failed to load profile");
-
-      const data = await res.json();
-      setProfile(data);
-      setDraft(data);
+      setProfile(profileData);
+      setDraft(profileData);
     } catch (err) {
+      console.error(err);
       setError("Couldn't load your profile. Please try again.");
     } finally {
       setLoading(false);
     }
   }
 
+  // Update the draft whenever a user types in an input.
   function handleChange(e) {
     const { name, value } = e.target;
-    setDraft((prev) => ({ ...prev, [name]: value }));
+
+    setDraft((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   }
 
+  // Enter edit mode.
   function handleEditClick() {
     setDraft(profile);
     setIsEditing(true);
@@ -68,81 +78,69 @@ const Profile =() => {
     setError("");
   }
 
+  // Cancel editing and restore original values.
   function handleCancel() {
     setDraft(profile);
     setIsEditing(false);
     setError("");
   }
 
+  // Save the edited profile.
   async function handleSave() {
     setSaving(true);
-    setError("");
-    setSuccessMsg("");
+   // setError("");
+   // setSuccessMsg("");
+
     try {
-      const res = await fetch(PROFILE_ENDPOINT, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(draft),
-      });
-
-      if (!res.ok) throw new Error("Failed to save profile");
-
-      const updated = await res.json();
+      const updated = await updateProfile(draft);
+        console.log("UPDATED PROFILE:", updated);
+      // Keep profile and draft synchronized.
       setProfile(updated);
       setDraft(updated);
+
       setIsEditing(false);
       setSuccessMsg("Profile updated successfully.");
     } catch (err) {
+      console.error(err);
       setError("Couldn't save your changes. Please try again.");
     } finally {
       setSaving(false);
     }
   }
 
-  function handleAvatarClick() {
-    if (isEditing) fileInputRef.current?.click();
-  }
-
-  async function handleAvatarChange(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const previewUrl = URL.createObjectURL(file);
-    setDraft((prev) => ({ ...prev, avatarUrl: previewUrl }));
-
-    try {
-      const formData = new FormData();
-      formData.append("avatar", file);
-
-      const res = await fetch(AVATAR_ENDPOINT, {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
-
-      if (!res.ok) throw new Error("Failed to upload photo");
-
-      const data = await res.json();
-      setDraft((prev) => ({ ...prev, avatarUrl: data.avatarUrl }));
-    } catch (err) {
-      setError("Couldn't upload your photo. Please try again.");
-    }
-  }
-
+  // Navigate back to the login page.
   function handleLogout() {
-    navigate("/login");
+    logout();
+    //React Router replaces the current page in the history instead of adding a new one
+    navigate("/login",{ replace: true });
   }
 
+  // Fields to display inside ProfileCard.
+  // Removed Phone and Avatar fields.
   const fields = [
-    { key: "name", label: "Full Name", icon: User, type: "text" },
-    { key: "email", label: "Email", icon: Mail, type: "email" },
-    { key: "phone", label: "Phone", icon: Phone, type: "tel" },
-    { key: "university", label: "University", icon: GraduationCap, type: "text" },
+    {
+      key: "name",
+      label: "Full Name",
+      icon: User,
+      type: "text",
+    },
+    {
+      key: "email",
+      label: "Email",
+      icon: Mail,
+      type: "email",
+    },
+    {
+      key: "university",
+      label: "University",
+      icon: GraduationCap,
+      type: "text",
+    },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 bg-white shadow-sm">
         <h1
           className="text-xl font-bold text-purple-600 cursor-pointer"
@@ -175,6 +173,7 @@ const Profile =() => {
         </div>
       </div>
 
+      {/* Main Content */}
       <div className="max-w-2xl mx-auto px-6 py-12">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -193,6 +192,7 @@ const Profile =() => {
           View and update your personal information.
         </motion.p>
 
+        {/* Show loading spinner while fetching profile */}
         {loading ? (
           <div className="mt-12 flex justify-center text-gray-500">
             <Loader2 className="animate-spin mr-2" size={20} />
@@ -210,19 +210,17 @@ const Profile =() => {
             onEdit={handleEditClick}
             onCancel={handleCancel}
             onSave={handleSave}
-            onAvatarClick={handleAvatarClick}
-            onAvatarChange={handleAvatarChange}
-            fileInputRef={fileInputRef}
             fields={fields}
           />
         )}
       </div>
 
+      {/* Footer */}
       <div className="mt-8 py-8 text-center text-gray-500 text-sm">
         © {new Date().getFullYear()} NeedRide
       </div>
     </div>
   );
-}
+};
 
 export default Profile;

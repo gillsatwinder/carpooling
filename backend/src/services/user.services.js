@@ -1,8 +1,8 @@
 const userRepository = require("../repositories/user.repository");
 
 
-const getProfile = async (email) => {
-  const user = await userRepository.findByEmail(email);
+const getProfile = async (userid) => {
+  const user = await userRepository.findById(userid);
 
   if (!user) {
     throw new Error("User not found");
@@ -11,11 +11,11 @@ const getProfile = async (email) => {
   return user;
 };
 
-const updateProfile = async (email, data) => {
-  const updatedUser = await userRepository.update(email, data);
+const updateProfile = async (id, data) => {
+  const updatedUser = await userRepository.update(id, data);
 
   if (!updatedUser) {
-    throw new Error("User not found");
+    throw new Error("User not found");s
   }
 
   return updatedUser;
