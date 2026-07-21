@@ -38,8 +38,20 @@ export async function cancelPost(postId) {
   });
 }
 
+
 export async function closePost(postId) {
   return await fetchClient(`/posts/${postId}/close`, {
     method: "PATCH",
   });
 } 
+
+export async function getProfile() {
+  return await fetchClient('/user/profile'); 
+}
+
+export async function updateProfile(data) {
+  return await fetchClient('/user/profile', {
+    method: "PUT",
+    body: JSON.stringify(data),
+  }); 
+}

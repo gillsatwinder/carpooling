@@ -13,3 +13,11 @@ export async function loginUser({ email, password }) {
     body: JSON.stringify({ email, password }),
   });
 }
+
+export function logout() {
+  // Remove the JWT token
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("onboarded");
+  sessionStorage.clear();
+}

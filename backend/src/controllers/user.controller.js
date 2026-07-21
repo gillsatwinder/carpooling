@@ -16,7 +16,7 @@ const completeOnboarding = async (req, res) => {
   );
 }
 
-    const updatedUser = await userService.updateProfile(userId, {
+    const updatedUser = await userService.updateProfileById(userId, {
       sex,
       age,
       graduation_date,
@@ -35,8 +35,8 @@ const completeOnboarding = async (req, res) => {
 
 const getProfile = async (req, res) => {
   try {
-    const useremail = req.user.email;
-    const user = await userService.getProfile(useremail)
+    const userid= req.user.id;
+    const user = await userService.getProfile(userid)
     return success(
       res,
       200,
@@ -50,10 +50,9 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async(req, res )=> {
   try {
-    const useremail= req.user.email;
-
+    const userid= req.user.id;
     const {email,password, ...updates}= req.body;
-    const user = await userService.updateProfile(useremail, updates);
+    const user = await userService.updateProfile(userid, updates);
     return success(
       res,
       200,
