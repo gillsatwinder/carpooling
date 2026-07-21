@@ -39,3 +39,12 @@ exports.cancelPost = async (id, userId) => {
 
   return await postRepository.update(id, { status: "CANCELLED" });
 };
+
+exports.closePost = async (id, userId) => {
+  const post = await postRepository.findById(id);
+
+  if (!post) throw new Error("Post not found");
+  if (post.user_id !== userId) throw new Error("Unauthorized");
+
+  return await postRepository.update(id, { status: "CLOSED" });
+};

@@ -61,3 +61,14 @@ exports.cancelPost = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.closePost = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const post = await postService.closePost(req.params.id, userId);
+
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
