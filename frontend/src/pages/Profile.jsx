@@ -94,9 +94,10 @@ const Profile = () => {
     try {
       const updated = await updateProfile(draft);
         console.log("UPDATED PROFILE:", updated);
+      const data=updated.data;
       // Keep profile and draft synchronized.
-      setProfile(updated);
-      setDraft(updated);
+      setProfile(data);
+      setDraft(data);
 
       setIsEditing(false);
       setSuccessMsg("Profile updated successfully.");

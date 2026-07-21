@@ -54,5 +54,4 @@ export async function updateProfile(data) {
     method: "PUT",
     body: JSON.stringify(data),
   }); 
-   return response.data;
 }
