@@ -30,35 +30,37 @@ const Profile = () => {
   // Stores the user's edits before they are saved.
   const [draft, setDraft] = useState(initialProfile);
 
-  // Fetch profile once when the component loads.
-  useEffect(() => {
-    fetchProfile();
-  }, []);
+
 
   // Fetch profile data from the backend.
-  async function fetchProfile() {
-    setLoading(true);
-    setError("");
 
-    try {
-      const response = await getProfile();
-       const data = response.data;
-      // Merge backend data with default values.
-      // This prevents missing fields from becoming undefined.
-      const profileData = {
-        ...initialProfile,
-        ...data,
-      };
+  // Fetch profile once when the component loads.
+  useEffect(() => {
+    async function fetchProfile() {
+      setLoading(true);
+      setError("");
 
-      setProfile(profileData);
-      setDraft(profileData);
-    } catch (err) {
-      console.error(err);
-      setError("Couldn't load your profile. Please try again.");
-    } finally {
-      setLoading(false);
+      try {
+        const response = await getProfile();
+        const data = response.data;
+        // Merge backend data with default values.
+        // This prevents missing fields from becoming undefined.
+        const profileData = {
+          ...initialProfile,
+          ...data,
+        };
+
+        setProfile(profileData);
+        setDraft(profileData);
+      } catch (err) {
+        console.error(err);
+        setError("Couldn't load your profile. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     }
-  }
+    fetchProfile();
+  }, []);
 
   // Update the draft whenever a user types in an input.
   function handleChange(e) {
@@ -88,13 +90,13 @@ const Profile = () => {
   // Save the edited profile.
   async function handleSave() {
     setSaving(true);
-   // setError("");
-   // setSuccessMsg("");
+    // setError("");
+    // setSuccessMsg("");
 
     try {
       const updated = await updateProfile(draft);
-        console.log("UPDATED PROFILE:", updated);
-      const data=updated.data;
+      console.log("UPDATED PROFILE:", updated);
+      const data = updated.data;
       // Keep profile and draft synchronized.
       setProfile(data);
       setDraft(data);
@@ -113,7 +115,7 @@ const Profile = () => {
   function handleLogout() {
     logout();
     //React Router replaces the current page in the history instead of adding a new one
-    navigate("/login",{ replace: true });
+    navigate("/login", { replace: true });
   }
 
   // Fields to display inside ProfileCard.
