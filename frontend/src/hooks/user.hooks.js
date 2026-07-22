@@ -7,7 +7,7 @@ export async function submitOnboarding(data) {
   });
 }
 export async function getAllPosts() {
-  return await fetchClient("/posts");
+  return await fetchClient("/posts?status=OPEN");
 }
 
 export async function getPostById(postId) {

@@ -3,6 +3,7 @@ const router = express.Router();
 
 const postController = require("../controllers/post.controller");
 const authenticateToken = require("../middleware/auth.middleware");
+const rideParticipantController =require("../controllers/ride_participant.controller");
 
 // Create post
 router.post("/", authenticateToken, postController.createPost);
@@ -24,5 +25,12 @@ router.patch("/:id/cancel", authenticateToken, postController.cancelPost);
 
 //close post
 router.patch("/:id/close", authenticateToken, postController.closePost);
+
+//join ride
+router.post( "/:postId/participants", authenticateToken, rideParticipantController.joinRide
+);
+
+// Get participants for a ride
+router.get("/:postId/participants", authenticateToken, rideParticipantController.getParticipants);
 
 module.exports = router;

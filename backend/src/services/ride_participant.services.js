@@ -1,0 +1,55 @@
+const postRepository = require("../repositories/post.repository");
+const participantRepository = require("../repositories/ride_participant.repository");
+
+exports.joinRide = async (postId, userId) => {
+  // Find the post
+  const post = await postRepository.findById(postId);
+
+  if (!post) {
+    throw new Error("Post not found");
+  }
+  // Only ride offers can be joined
+  if (post.type !== "RIDE_OFFER") {
+    throw new Error("You can only join ride offers");
+  }
+
+  // Only open rides can be joined
+  if (post.status !== "OPEN") {
+    throw new Error("This ride is no longer open");
+  }
+
+  // Owner cannot join their own post
+  if (post.owner_id === userId) {
+    throw new Error("You cannot join your own ride");
+  }
+
+  // Check duplicate participation
+  const existing = await participantRepository.findByPostAndUser(
+    postId,
+    userId
+  );
+
+  if (existing) {
+    throw new Error("You have already joined this ride");
+  }
+
+
+
+  return await participantRepository.create({
+    post_id: postId,
+    user_id: userId,
+    role: "PASSENGER",
+    status: "PENDING",
+  });
+};
+
+exports.getParticipants = async (postId) => {
+
+  const post = await postRepository.findById(postId);
+
+  if (!post) {
+    throw new Error("Post not found");
+  }
+
+  return await participantRepository.findAllByPost(postId);
+};

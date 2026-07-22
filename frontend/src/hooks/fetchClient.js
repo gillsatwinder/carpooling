@@ -16,12 +16,18 @@ export async function fetchClient(endpoint, options = {}) {
   });
 
   const data = await res.json().catch(() => null);
+  console.log("Fetch result:", data);
 
   if (!res.ok) {
-    const err = new Error(data?.message || "Request failed");
-    err.status = res.status;
-    err.data = data;
-    throw err;
+
+      const error = new Error(
+      data?.error || "Request failed"
+    );
+
+    error.status = res.status;
+    error.data = data;
+    throw error;
+
   }
 
   return data;
