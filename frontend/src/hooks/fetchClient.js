@@ -16,7 +16,7 @@ export async function fetchClient(endpoint, options = {}) {
   });
 
   const data = await res.json().catch(() => null);
-  console.log("Fetch result:", data);
+
 
   if (!res.ok) {
 
