@@ -161,9 +161,8 @@ exports.cancelRequest = async(
     );
 
 
- return await participantRepository.updateStatus(
-    participantId,
-    "CANCELLED"
+return await participantRepository.delete(
+    participantId
  );
 
 };
@@ -195,10 +194,8 @@ exports.leaveRide = async(
       "You are not in this ride"
     );
 
-
- return await participantRepository.updateStatus(
-    participantId,
-    "CANCELLED"
+ return await participantRepository.delete(
+    participantId
  );
 
 };

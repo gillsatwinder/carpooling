@@ -73,7 +73,6 @@ exports.findByUserId = async(userId)=>{
 
   where:{
     user_id:userId,
-    status:"ACCEPTED"
   },
 
   include:[
@@ -89,4 +88,12 @@ exports.findByUserId = async(userId)=>{
 
  });
 
+};
+
+exports.delete = async (id) => {
+  return await RideParticipant.destroy({
+    where: {
+      id,
+    },
+  });
 };

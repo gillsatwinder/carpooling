@@ -18,6 +18,7 @@ Post.hasMany(RideParticipant, {
 
 RideParticipant.belongsTo(Post, {
     foreignKey: "post_id",
+    as: "post",
 });
 
 RideParticipant.belongsTo(User, {

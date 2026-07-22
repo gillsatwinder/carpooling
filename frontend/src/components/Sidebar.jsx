@@ -52,6 +52,18 @@ const Sidebar = () => {
         >
           My Rides
         </NavLink>
+        <NavLink
+          to="/my-requested-rides"
+          className={({ isActive }) =>
+            `flex items-center px-4 py-2 rounded-lg transition ${
+              isActive
+                ? "bg-purple-100 text-purple-700 font-medium"
+                : "text-gray-600 hover:bg-gray-100"
+            }`
+          }
+        >
+          My Requested Rides
+        </NavLink>
 
 
       </nav>

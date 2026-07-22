@@ -9,6 +9,7 @@ import Dashboard from "../pages/Dashboard";
 import AppLayout from "../layouts/AppLayout";
 import RideManagement from "../pages/RideManagement";
 import Profile from "../pages/Profile";
+import MyRequestedRides from "../pages/MyRequestedRides";
 
 function OnboardingRoute({ children }) {
   const { isAuthenticated, onboarded } = useAuth();
@@ -79,6 +80,17 @@ export default function AppRouter() {
             <ProtectedRoute>
               <AppLayout>
               <Profile/>
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-requested-rides"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <MyRequestedRides />
               </AppLayout>
             </ProtectedRoute>
           }

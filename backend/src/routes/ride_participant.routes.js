@@ -37,7 +37,7 @@ router.delete(
 );
 
 
-// Get rides where current user joined
+// Get rides where user has joined
 router.get(
   "/my-rides",
   authenticateToken,

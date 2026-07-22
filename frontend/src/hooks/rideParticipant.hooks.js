@@ -21,3 +21,19 @@ export async function rejectParticipant(participantId) {
     method: "PATCH",
   });
 }
+
+export async function cancelRequest(participantId) {
+  return await fetchClient(`/participants/${participantId}/cancel`, {
+    method: "PATCH",
+  });
+}
+
+export async function leaveRide(participantId) {
+  return await fetchClient(`/participants/${participantId}`, {
+    method: "DELETE",
+  });
+}
+
+export async function getMyJoinedRides() {
+  return await fetchClient(`/participants/my-rides`);
+}
