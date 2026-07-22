@@ -1,4 +1,4 @@
-const { RideParticipant,User } = require("../models");
+const { RideParticipant,User, Post} = require("../models");
 
 exports.create = async (data) => {
   return await RideParticipant.create(data);
@@ -27,4 +27,66 @@ exports.findAllByPost = async (postId) => {
     ],
     order: [["created_at", "DESC"]],
   });
+};
+
+exports.findById = async(id)=>{
+
+ return await RideParticipant.findByPk(id);
+
+};
+
+exports.countAccepted = async(postId)=>{
+
+ return await RideParticipant.count({
+
+  where:{
+    post_id:postId,
+    status:"ACCEPTED"
+  }
+
+ });
+};
+
+exports.updateStatus = async(
+ id,
+ status
+)=>{
+
+ await RideParticipant.update(
+ {
+   status
+ },
+ {
+   where:{
+     id
+   }
+ });
+
+
+ return await RideParticipant.findByPk(id);
+
+};
+
+exports.findByUserId = async(userId)=>{
+
+ return await RideParticipant.findAll({
+
+  where:{
+    user_id:userId,
+    status:"ACCEPTED"
+  },
+
+  include:[
+    {
+      model:Post,
+      as:"post"
+    }
+  ],
+
+  order:[
+    ["created_at","DESC"]
+  ]
+
+ });
+
 };

@@ -50,7 +50,7 @@ const Sidebar = () => {
             }`
           }
         >
-          Ride Management
+          My Rides
         </NavLink>
 
 

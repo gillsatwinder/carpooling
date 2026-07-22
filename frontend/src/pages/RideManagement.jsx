@@ -1,5 +1,10 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { getMyPosts, cancelPost } from "../hooks/user.hooks";
+import { getMyPosts, cancelPost, closePost } from "../hooks/user.hooks";
+import {
+  getParticipants,
+  acceptParticipant,
+  rejectParticipant,
+} from "../hooks/rideParticipant.hooks";
 import CreateRide from "../components/CreateRide";
 import {
   Car,
@@ -35,25 +40,74 @@ const formatDateTime = (value) => {
   });
 };
 
-const RideCard = ({ ride, onEdit, onCancel, cancellingId }) => {
+const RideCard = ({ ride, onEdit, onCancel, onClose, cancellingId, closingId, }) => {
+  const [participants, setParticipants] = useState([]);
+  const [showParticipants, setShowParticipants] = useState(false);
+  const [loadingParticipants, setLoadingParticipants] = useState(false);
+
   const id = ride.id ?? ride._id;
   const isOffer = ride.type === "RIDE_OFFER";
   const status = (ride.status || "ACTIVE").toUpperCase();
   const isCancelled = status === "CANCELLED";
   const isCancelling = cancellingId === id;
+  const isClosed = status === "CLOSED";
+  const isClosing = closingId === id;
+
+  const handleViewParticipants = async () => {
+    try {
+      setLoadingParticipants(true);
+
+      const data = await getParticipants(id);
+
+      setParticipants(data);
+      setShowParticipants(true);
+
+    } catch (err) {
+      alert(err.message || "Failed to fetch participants");
+    } finally {
+      setLoadingParticipants(false);
+    }
+  };
+
+
+  const handleAccept = async (participantId) => {
+    try {
+
+      await acceptParticipant(participantId);
+
+      // refresh participants
+      const data = await getParticipants(id);
+      setParticipants(data);
+
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+
+  const handleReject = async (participantId) => {
+    try {
+
+      await rejectParticipant(participantId);
+
+      const data = await getParticipants(id);
+      setParticipants(data);
+
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   return (
     <div
-      className={`bg-white rounded-xl border border-slate-100 shadow-sm p-5 transition-opacity ${
-        isCancelled ? "opacity-60" : ""
-      }`}
+      className={`bg-white rounded-xl border border-slate-100 shadow-sm p-5 transition-opacity ${isCancelled ? "opacity-60" : ""
+        }`}
     >
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-2 min-w-0">
           <span
-            className={`shrink-0 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide px-2 py-1 rounded-md ${
-              isOffer ? "bg-[#F5A623]/10 text-[#B4790E]" : "bg-[#0F9D8E]/10 text-[#0F9D8E]"
-            }`}
+            className={`shrink-0 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide px-2 py-1 rounded-md ${isOffer ? "bg-[#F5A623]/10 text-[#B4790E]" : "bg-[#0F9D8E]/10 text-[#0F9D8E]"
+              }`}
           >
             <Car size={11} />
             {isOffer ? "Offer" : "Request"}
@@ -63,9 +117,8 @@ const RideCard = ({ ride, onEdit, onCancel, cancellingId }) => {
           </h3>
         </div>
         <span
-          className={`shrink-0 text-[11px] font-semibold uppercase tracking-wide px-2 py-1 rounded-md ${
-            STATUS_STYLES[status] || STATUS_STYLES.ACTIVE
-          }`}
+          className={`shrink-0 text-[11px] font-semibold uppercase tracking-wide px-2 py-1 rounded-md ${STATUS_STYLES[status] || STATUS_STYLES.ACTIVE
+            }`}
         >
           {status}
         </span>
@@ -109,15 +162,42 @@ const RideCard = ({ ride, onEdit, onCancel, cancellingId }) => {
 
       {/* Actions */}
       {!isCancelled && (
-        <div className="flex gap-2 pt-3 border-t border-slate-100">
+        <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-100">
           <button
             type="button"
+            disabled={isClosed}
             onClick={() => onEdit(ride)}
-            className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-[#16213E] border border-slate-200 rounded-lg py-2 hover:bg-slate-50 transition-colors"
+            className={`flex-1 flex items-center justify-center gap-1.5 text-sm font-medium border border-slate-200 rounded-lg py-2 transition-colors ${isClosed
+                ? "opacity-40 cursor-not-allowed"
+                : "text-[#16213E] hover:bg-slate-50"
+              }`}
           >
             <Pencil size={13} />
             Edit
           </button>
+          {isOffer && (
+            <button
+              type="button"
+              onClick={handleViewParticipants}
+              className="flex-1 text-sm font-medium text-[#16213E] border border-slate-200 rounded-lg py-2 hover:bg-slate-50"
+            >
+              {loadingParticipants
+                ? "Loading..."
+                : showParticipants
+                  ? "Hide Participants"
+                  : "View Participants"}
+            </button>
+          )}
+          {!isClosed && (
+            <button
+              type="button"
+              onClick={() => onClose(id)}
+              disabled={isClosing}
+              className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-orange-600 border border-orange-100 rounded-lg py-2 hover:bg-orange-50"
+            >
+              {isClosing ? "Closing..." : "Close"}
+            </button>
+          )}
           <button
             type="button"
             onClick={() => onCancel(id)}
@@ -133,7 +213,82 @@ const RideCard = ({ ride, onEdit, onCancel, cancellingId }) => {
           </button>
         </div>
       )}
+      {showParticipants && (
+        <div className="mt-4 border-t border-slate-100 pt-4">
+
+          <h4 className="font-semibold text-[#16213E] mb-3">
+            Ride Requests
+          </h4>
+
+
+          {participants.length === 0 ? (
+
+            <p className="text-sm text-slate-400">
+              No participants yet
+            </p>
+
+          ) : (
+
+            <div className="space-y-2">
+
+              {participants.map((participant) => (
+                <div
+                  key={participant.id}
+                  className="flex items-center justify-between bg-slate-50 rounded-lg p-3"
+                >
+
+                  <div>
+                    <p className="font-medium text-sm">
+                      {participant.participant?.name}
+                    </p>
+
+                    <p className="text-xs text-slate-500">
+                      {participant.participant?.email}
+                    </p>
+
+                    <span className="text-xs text-slate-500">
+                      {participant.status}
+                    </span>
+                  </div>
+
+
+                  {participant.status === "PENDING" && (
+                    <div className="flex gap-2">
+
+                      <button
+                        onClick={() =>
+                          handleAccept(participant.id)
+                        }
+                        className="text-xs px-3 py-1 rounded-md bg-[#0F9D8E] text-white"
+                      >
+                        Accept
+                      </button>
+
+
+                      <button
+                        onClick={() =>
+                          handleReject(participant.id)
+                        }
+                        className="text-xs px-3 py-1 rounded-md bg-red-100 text-red-600"
+                      >
+                        Reject
+                      </button>
+
+                    </div>
+                  )}
+
+                </div>
+              ))}
+
+            </div>
+
+          )}
+
+        </div>
+      )}
     </div>
+
+
   );
 };
 
@@ -141,8 +296,9 @@ const RideManagement = () => {
   const [rides, setRides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState("ACTIVE"); // ACTIVE | CANCELLED
+  const [filter, setFilter] = useState("ACTIVE"); // ACTIVE | CLOSED | CANCELLED
   const [cancellingId, setCancellingId] = useState(null);
+  const [closingId, setClosingId] = useState(null);
 
   const [showForm, setShowForm] = useState(false);
   const [editingRide, setEditingRide] = useState(null);
@@ -173,14 +329,27 @@ const RideManagement = () => {
   }, [fetchRides]);
 
   const activeRides = useMemo(
-    () => rides.filter((r) => r.status !== "CANCELLED"),
+    () => rides.filter((r) => r.status === "OPEN"),
     [rides]
   );
+
+  const closedRides = useMemo(
+    () => rides.filter((r) => r.status === "CLOSED"),
+    [rides]
+  );
+
   const cancelledRides = useMemo(
     () => rides.filter((r) => r.status === "CANCELLED"),
     [rides]
   );
-  const visibleRides = filter === "ACTIVE" ? activeRides : cancelledRides;
+
+
+  const visibleRides =
+    filter === "ACTIVE"
+      ? activeRides
+      : filter === "CLOSED"
+        ? closedRides
+        : cancelledRides;
 
   const openCreate = () => {
     setEditingRide(null);
@@ -221,6 +390,30 @@ const RideManagement = () => {
     } finally {
       setCancellingId(null);
       setConfirmCancelId(null);
+    }
+  };
+
+  const handleClose = async (postId) => {
+    try {
+      setClosingId(postId);
+
+      await closePost(postId);
+
+      setRides((prev) =>
+        prev.map((ride) =>
+          (ride.id ?? ride._id) === postId
+            ? {
+              ...ride,
+              status: "CLOSED",
+            }
+            : ride
+        )
+      );
+
+    } catch (err) {
+      alert(err.message || "Failed to close ride");
+    } finally {
+      setClosingId(null);
     }
   };
 
@@ -270,22 +463,30 @@ const RideManagement = () => {
           <button
             type="button"
             onClick={() => setFilter("ACTIVE")}
-            className={`text-sm font-semibold px-3.5 py-1.5 rounded-full transition-colors ${
-              filter === "ACTIVE"
-                ? "bg-[#16213E] text-white"
-                : "bg-white text-slate-500 border border-slate-200 hover:bg-slate-50"
-            }`}
+            className={`text-sm font-semibold px-3.5 py-1.5 rounded-full transition-colors ${filter === "ACTIVE"
+              ? "bg-[#16213E] text-white"
+              : "bg-white text-slate-500 border border-slate-200 hover:bg-slate-50"
+              }`}
           >
             Active ({activeRides.length})
           </button>
           <button
             type="button"
-            onClick={() => setFilter("CANCELLED")}
-            className={`text-sm font-semibold px-3.5 py-1.5 rounded-full transition-colors ${
-              filter === "CANCELLED"
+            onClick={() => setFilter("CLOSED")}
+            className={`text-sm font-semibold px-3.5 py-1.5 rounded-full transition-colors ${filter === "CLOSED"
                 ? "bg-[#16213E] text-white"
                 : "bg-white text-slate-500 border border-slate-200 hover:bg-slate-50"
-            }`}
+              }`}
+          >
+            Closed ({closedRides.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilter("CANCELLED")}
+            className={`text-sm font-semibold px-3.5 py-1.5 rounded-full transition-colors ${filter === "CANCELLED"
+              ? "bg-[#16213E] text-white"
+              : "bg-white text-slate-500 border border-slate-200 hover:bg-slate-50"
+              }`}
           >
             Cancelled ({cancelledRides.length})
           </button>
@@ -332,6 +533,8 @@ const RideManagement = () => {
                 onEdit={openEdit}
                 onCancel={requestCancel}
                 cancellingId={cancellingId}
+                onClose={handleClose}
+                closingId={closingId}
               />
             ))}
           </div>

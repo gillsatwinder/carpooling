@@ -53,3 +53,152 @@ exports.getParticipants = async (postId) => {
 
   return await participantRepository.findAllByPost(postId);
 };
+
+exports.acceptParticipant = async(  participantId, ownerId )=>{
+
+  const participant =
+    await participantRepository.findById(
+      participantId
+    );
+
+
+  if(!participant)
+    throw new Error("Participant not found");
+
+
+  const post =
+    await postRepository.findById(
+      participant.post_id
+    );
+
+
+  if(post.owner_id !== ownerId)
+    throw new Error("Unauthorized");
+
+
+  const acceptedCount =
+    await participantRepository.countAccepted(
+      participant.post_id
+    );
+
+
+  if(acceptedCount >= post.seats)
+    throw new Error("No seats available");
+
+
+  return await participantRepository.updateStatus(
+    participantId,
+    "ACCEPTED"
+  );
+
+};
+
+
+// REJECT
+exports.rejectParticipant = async( participantId, ownerId )=>{
+
+ const participant =
+ await participantRepository.findById(
+    participantId
+ );
+
+
+ if(!participant)
+    throw new Error("Participant not found");
+
+
+ const post =
+ await postRepository.findById(
+    participant.post_id
+ );
+
+
+ if(post.owner_id !== ownerId)
+    throw new Error("Unauthorized");
+
+
+ return await participantRepository.updateStatus(
+    participantId,
+    "REJECTED"
+ );
+
+};
+
+// MY RIDES
+exports.getMyJoinedRides = async(
+ userId
+)=>{
+
+ return await participantRepository.findByUserId(
+    userId
+ );
+
+};
+
+// CANCEL REQUEST
+exports.cancelRequest = async(
+ participantId,
+ userId
+)=>{
+
+ const participant =
+ await participantRepository.findById(
+    participantId
+ );
+
+
+ if(!participant)
+    throw new Error("Participant not found");
+
+
+ if(participant.user_id !== userId)
+    throw new Error("Unauthorized");
+
+
+ if(participant.status !== "PENDING")
+    throw new Error(
+      "Only pending requests can be cancelled"
+    );
+
+
+ return await participantRepository.updateStatus(
+    participantId,
+    "CANCELLED"
+ );
+
+};
+
+
+
+// LEAVE RIDE
+exports.leaveRide = async(
+ participantId,
+ userId
+)=>{
+
+ const participant =
+ await participantRepository.findById(
+    participantId
+ );
+
+
+ if(!participant)
+    throw new Error("Participant not found");
+
+
+ if(participant.user_id !== userId)
+    throw new Error("Unauthorized");
+
+
+ if(participant.status !== "ACCEPTED")
+    throw new Error(
+      "You are not in this ride"
+    );
+
+
+ return await participantRepository.updateStatus(
+    participantId,
+    "CANCELLED"
+ );
+
+};

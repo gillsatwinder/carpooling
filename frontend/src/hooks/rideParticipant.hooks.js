@@ -10,3 +10,14 @@ export async function joinRide(postId, data) {
     body: JSON.stringify(data),
   });
 }
+export async function acceptParticipant(participantId) {
+  return await fetchClient(`/participants/${participantId}/accept`, {
+    method: "PATCH",
+  });
+}
+
+export async function rejectParticipant(participantId) {
+  return await fetchClient(`/participants/${participantId}/reject`, {
+    method: "PATCH",
+  });
+}
