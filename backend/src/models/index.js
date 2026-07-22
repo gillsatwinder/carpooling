@@ -8,8 +8,8 @@ const Post = require("./post.models");
 // --------------------
 
 // User → Posts
-User.hasMany(Post, { foreignKey: "user_id", as: "posts" });
-Post.belongsTo(User, { foreignKey: "user_id", as: "user" });
+User.hasMany(Post, { foreignKey: "owner_id", as: "posts" });
+Post.belongsTo(User, { foreignKey: "owner_id", as: "owner" });
 
 // If you add later:
 // User.hasMany(Message)

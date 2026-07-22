@@ -3,7 +3,7 @@ const postRepository = require("../repositories/post.repository");
 exports.createPost = async (userId, data) => {
   return await postRepository.create({
     ...data,
-    user_id: userId,
+    owner_id: userId,
     status: "OPEN",
   });
 };
@@ -26,7 +26,7 @@ exports.updatePost = async (id, userId, data) => {
   const post = await postRepository.findById(id);
 
   if (!post) throw new Error("Post not found");
-  if (post.user_id !== userId) throw new Error("Unauthorized");
+  if (post.owner_id !== userId) throw new Error("Unauthorized");
 
   return await postRepository.update(id, data);
 };
@@ -35,7 +35,7 @@ exports.cancelPost = async (id, userId) => {
   const post = await postRepository.findById(id);
 
   if (!post) throw new Error("Post not found");
-  if (post.user_id !== userId) throw new Error("Unauthorized");
+  if (post.owner_id !== userId) throw new Error("Unauthorized");
 
   return await postRepository.update(id, { status: "CANCELLED" });
 };
@@ -44,7 +44,7 @@ exports.closePost = async (id, userId) => {
   const post = await postRepository.findById(id);
 
   if (!post) throw new Error("Post not found");
-  if (post.user_id !== userId) throw new Error("Unauthorized");
+  if (post.owner_id !== userId) throw new Error("Unauthorized");
 
   return await postRepository.update(id, { status: "CLOSED" });
 };
