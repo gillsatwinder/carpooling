@@ -1,26 +1,40 @@
 import { useMemo,useEffect,useState } from "react";
 import { getAllPosts } from "../hooks/user.hooks";
+import { getMyJoinedRides } from "../hooks/rideParticipant.hooks";
 import DashboardSection from "../components/DashboardSection";
 
 const Dashboard = () => {
    const [posts, setPosts] = useState([]);
    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const [joinedRideIds, setJoinedRideIds] = useState([]); 
    useEffect(() => {
-    async function fetchPosts() {
-      try {
-        const data = await getAllPosts();
-        setPosts(data);
-      } catch (err) {
-        console.error(err);
-        setError(err?.message || "Failed to fetch posts");
-      } finally {
-        setLoading(false);
-      }
-    }
+    async function fetchData() {
+    try {
 
-    fetchPosts();
+      const [postsData, joinedData] = await Promise.all([
+        getAllPosts(),
+        getMyJoinedRides()
+      ]);
+
+      setPosts(postsData);
+
+      const joinedIds = joinedData.map(
+        (ride) => ride.post_id
+      );
+
+      setJoinedRideIds(joinedIds);
+
+    } catch (err) {
+      console.error(err);
+      setError(err?.message || "Failed to fetch data");
+
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchData();
   }, []);
 
 
@@ -56,16 +70,19 @@ const Dashboard = () => {
       <DashboardSection
         title="Ride Offers"
         posts={groupedPosts.rideOffers}
+        joinedRideIds={joinedRideIds}
       />
 
       <DashboardSection
         title="Ride Requests"
         posts={groupedPosts.rideRequests}
+        joinedRideIds={joinedRideIds}
       />
 
       <DashboardSection
         title="General Ads"
         posts={groupedPosts.generalAds}
+        joinedRideIds={joinedRideIds}
       />
 
     </div>

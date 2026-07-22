@@ -1,6 +1,6 @@
 import PostCard from "./Postcard";
 
-const DashboardSection = ({ title, posts }) => {
+const DashboardSection = ({ title, posts , joinedRideIds}) => {
   return (
     <div className="mb-10">
 
@@ -24,6 +24,7 @@ const DashboardSection = ({ title, posts }) => {
             <PostCard
               key={post.id}
               post={post}
+              isJoined={joinedRideIds.includes(post.id)}
             />
           ))}
         </div>

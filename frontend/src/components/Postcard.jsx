@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { joinRide, getParticipants } from "../hooks/rideParticipant.hooks";
-const PostCard = ({ post }) => {
+const PostCard = ({ post, isJoined }) => {
   const [participants, setParticipants] = useState([]);
   const [showParticipants, setShowParticipants] = useState(false);
 
@@ -10,7 +10,7 @@ const PostCard = ({ post }) => {
       await joinRide(post.id);
       alert("Ride request sent successfully");
     } catch (err) {
-       alert(err.message)
+      alert(err.message)
     }
   };
 
@@ -22,8 +22,8 @@ const PostCard = ({ post }) => {
       setParticipants(data);
       setShowParticipants(true);
 
-    } catch(err) {
-       alert(err.message);
+    } catch (err) {
+      alert(err.message);
     }
   };
   return (
@@ -95,10 +95,14 @@ const PostCard = ({ post }) => {
         <div className="mt-5 flex gap-3">
 
           <button
+            disabled={isJoined}
             onClick={handleJoinRide}
-            className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
+            className={`px-4 py-2 rounded ${isJoined
+                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                : "bg-purple-600 text-white"
+              }`}
           >
-            Join Ride
+            {isJoined ? "Joined" : "Join Ride"}
           </button>
 
 
@@ -129,7 +133,7 @@ const PostCard = ({ post }) => {
             </p>
           ) : (
 
-            participants.map((participant)=>(
+            participants.map((participant) => (
               <div
                 key={participant.id}
                 className="text-sm flex justify-between"
