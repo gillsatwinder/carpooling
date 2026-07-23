@@ -10,6 +10,7 @@ import AppLayout from "../layouts/AppLayout";
 import RideManagement from "../pages/RideManagement";
 import Profile from "../pages/Profile";
 import MyRequestedRides from "../pages/MyRequestedRides";
+import RideRequests from "../pages/RideRequests"
 
 function OnboardingRoute({ children }) {
   const { isAuthenticated, onboarded } = useAuth();
@@ -106,6 +107,17 @@ export default function AppRouter() {
             </ProtectedRoute>
           }
         />  
+
+        <Route
+          path="/ride-requests"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <RideRequests />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
 
         {/* Default redirect */}
         <Route path="/" element={<Home />} />

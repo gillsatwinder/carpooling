@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { getMyPosts, cancelPost, closePost } from "../hooks/user.hooks";
+import { getMyPosts, cancelPost, closePost, deletePost } from "../hooks/user.hooks";
 import {
   getParticipants,
   acceptParticipant,
@@ -40,7 +40,7 @@ const formatDateTime = (value) => {
   });
 };
 
-const RideCard = ({ ride, onEdit, onCancel, onClose, cancellingId, closingId, }) => {
+const RideCard = ({ ride, onEdit, onCancel, onClose, onDelete, cancellingId, closingId, deletingId }) => {
   const [participants, setParticipants] = useState([]);
   const [showParticipants, setShowParticipants] = useState(false);
   const [loadingParticipants, setLoadingParticipants] = useState(false);
@@ -52,6 +52,7 @@ const RideCard = ({ ride, onEdit, onCancel, onClose, cancellingId, closingId, })
   const isCancelling = cancellingId === id;
   const isClosed = status === "CLOSED";
   const isClosing = closingId === id;
+  const isDeleting = deletingId === id;
 
   const handleViewParticipants = async () => {
     try {
@@ -161,58 +162,77 @@ const RideCard = ({ ride, onEdit, onCancel, onClose, cancellingId, closingId, })
       </div>
 
       {/* Actions */}
-      {!isCancelled && (
-        <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-100">
-          <button
-            type="button"
-            disabled={isClosed}
-            onClick={() => onEdit(ride)}
-            className={`flex-1 flex items-center justify-center gap-1.5 text-sm font-medium border border-slate-200 rounded-lg py-2 transition-colors ${isClosed
+      <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-100">
+        {!isCancelled ? (
+          <>
+            <button
+              type="button"
+              disabled={isClosed}
+              onClick={() => onEdit(ride)}
+              className={`flex-1 flex items-center justify-center gap-1.5 text-sm font-medium border border-slate-200 rounded-lg py-2 transition-colors ${isClosed
                 ? "opacity-40 cursor-not-allowed"
                 : "text-[#16213E] hover:bg-slate-50"
-              }`}
-          >
-            <Pencil size={13} />
-            Edit
-          </button>
-          {isOffer && (
+                }`}
+            >
+              <Pencil size={13} />
+              Edit
+            </button>
+
+            {isOffer && (
+              <button
+                type="button"
+                onClick={handleViewParticipants}
+                className="flex-1 text-sm font-medium text-[#16213E] border border-slate-200 rounded-lg py-2 hover:bg-slate-50"
+              >
+                {loadingParticipants
+                  ? "Loading..."
+                  : showParticipants
+                    ? "Hide Participants"
+                    : "View Participants"}
+              </button>
+            )}
+
+            {!isClosed && (
+              <button
+                type="button"
+                onClick={() => onClose(id)}
+                disabled={isClosing}
+                className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-orange-600 border border-orange-100 rounded-lg py-2 hover:bg-orange-50"
+              >
+                {isClosing ? "Closing..." : "Close"}
+              </button>
+            )}
+
             <button
               type="button"
-              onClick={handleViewParticipants}
-              className="flex-1 text-sm font-medium text-[#16213E] border border-slate-200 rounded-lg py-2 hover:bg-slate-50"
+              onClick={() => onCancel(id)}
+              disabled={isCancelling}
+              className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-red-600 border border-red-100 rounded-lg py-2 hover:bg-red-50"
             >
-              {loadingParticipants
-                ? "Loading..."
-                : showParticipants
-                  ? "Hide Participants"
-                  : "View Participants"}
+              {isCancelling ? (
+                <Loader2 size={13} className="animate-spin" />
+              ) : (
+                <Ban size={13} />
+              )}
+              {isCancelling ? "Cancelling..." : "Cancel"}
             </button>
-          )}
-          {!isClosed && (
-            <button
-              type="button"
-              onClick={() => onClose(id)}
-              disabled={isClosing}
-              className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-orange-600 border border-orange-100 rounded-lg py-2 hover:bg-orange-50"
-            >
-              {isClosing ? "Closing..." : "Close"}
-            </button>
-          )}
+          </>
+        ) : (
           <button
             type="button"
-            onClick={() => onCancel(id)}
-            disabled={isCancelling}
-            className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-red-600 border border-red-100 rounded-lg py-2 hover:bg-red-50 transition-colors disabled:opacity-60"
+            onClick={() => onDelete(id)}
+            disabled={isDeleting}
+            className="w-full flex items-center justify-center gap-2 text-sm font-medium text-white bg-red-600 rounded-lg py-2 hover:bg-red-700 disabled:opacity-60"
           >
-            {isCancelling ? (
-              <Loader2 size={13} className="animate-spin" />
+            {isDeleting ? (
+              <Loader2 size={14} className="animate-spin" />
             ) : (
-              <Ban size={13} />
+              <Ban size={14} />
             )}
-            {isCancelling ? "Cancelling..." : "Cancel"}
+            {isDeleting ? "Deleting..." : "Delete Ride"}
           </button>
-        </div>
-      )}
+        )}
+      </div>
       {showParticipants && (
         <div className="mt-4 border-t border-slate-100 pt-4">
 
@@ -303,6 +323,7 @@ const RideManagement = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingRide, setEditingRide] = useState(null);
   const [confirmCancelId, setConfirmCancelId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   const fetchRides = useCallback(async () => {
     try {
@@ -417,6 +438,22 @@ const RideManagement = () => {
     }
   };
 
+  const handleDelete = async (postId) => {
+    try {
+      setDeletingId(postId);
+
+      await deletePost(postId);
+
+      setRides((prev) =>
+        prev.filter((ride) => (ride.id ?? ride._id) !== postId)
+      );
+    } catch (err) {
+      alert(err.message || "Failed to delete ride");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <div className="min-h-full bg-[#F5F7FA] py-10 px-4">
       <div className="max-w-2xl mx-auto">
@@ -474,8 +511,8 @@ const RideManagement = () => {
             type="button"
             onClick={() => setFilter("CLOSED")}
             className={`text-sm font-semibold px-3.5 py-1.5 rounded-full transition-colors ${filter === "CLOSED"
-                ? "bg-[#16213E] text-white"
-                : "bg-white text-slate-500 border border-slate-200 hover:bg-slate-50"
+              ? "bg-[#16213E] text-white"
+              : "bg-white text-slate-500 border border-slate-200 hover:bg-slate-50"
               }`}
           >
             Closed ({closedRides.length})
@@ -533,8 +570,10 @@ const RideManagement = () => {
                 onEdit={openEdit}
                 onCancel={requestCancel}
                 cancellingId={cancellingId}
+                onDelete={handleDelete}
                 onClose={handleClose}
                 closingId={closingId}
+                deletingId={deletingId}
               />
             ))}
           </div>

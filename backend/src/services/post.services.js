@@ -48,3 +48,15 @@ exports.closePost = async (id, userId) => {
 
   return await postRepository.update(id, { status: "CLOSED" });
 };
+exports.deletePost = async (id, userId) => {
+  const post = await postRepository.findById(id);
+
+  if (!post) throw new Error("Post not found");
+  // Ensure the logged-in user owns the post
+  if (post.owner_id !== userId) {
+    const error = new Error("You are not authorized to delete this post");
+    error.statusCode = 403;
+    throw error;
+  }
+  return await postRepository.delete(id);
+};

@@ -29,6 +29,8 @@ router.patch("/:id/close", authenticateToken, postController.closePost);
 //join ride
 router.post( "/:postId/participants", authenticateToken, rideParticipantController.joinRide
 );
+// Delete post
+router.delete("/:id", authenticateToken, postController.deletePost);
 
 // Get participants for a ride
 router.get("/:postId/participants", authenticateToken, rideParticipantController.getParticipants);

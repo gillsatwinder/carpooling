@@ -51,3 +51,7 @@ exports.update = async (id, data) => {
   await Post.update(data, { where: { id } });
   return await exports.findById(id);
 };
+
+exports.delete = async (id) => {
+  return await Post.destroy({ where: { id } });
+}; 
