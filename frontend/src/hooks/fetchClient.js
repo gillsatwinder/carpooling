@@ -18,14 +18,24 @@ export async function fetchClient(endpoint, options = {}) {
   const data = await res.json().catch(() => null);
 
 
-  if (!res.ok) {
+    if (!res.ok) {
+    if (res.status === 403) {
+     
 
-      const error = new Error(
-      data?.error || "Request failed"
-    );
+      window.dispatchEvent(
+        new CustomEvent("session-expired", {
+          detail: {
+            message: "Your session has expired. Please log in again.",
+          },
+        })
+      );
+    }
+
+    const error = new Error(data?.error || "Request failed");
 
     error.status = res.status;
     error.data = data;
+
     throw error;
 
   }
