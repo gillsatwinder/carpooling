@@ -171,29 +171,9 @@ const RideManagement = () => {
               Manage the rides you've offered or requested.
             </p>
           </div>
-          {!showForm && (
-            <button
-              type="button"
-              onClick={openCreate}
-              className="shrink-0 flex items-center gap-1.5 bg-[#16213E] hover:bg-[#1E2A4A] text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
-            >
-              <Plus size={16} />
-              New ride
-            </button>
-          )}
         </div>
 
-        {/* Create / edit form */}
-        {showForm && (
-          <div className="mb-8">
-            <CreateRide
-              mode={editingRide ? "edit" : "create"}
-              ride={editingRide}
-              onSuccess={handleFormSuccess}
-              onClose={closeForm}
-            />
-          </div>
-        )}
+        
 
         {/* Filter chips */}
         <div className="flex gap-2 mb-4">
