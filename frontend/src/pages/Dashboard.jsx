@@ -40,11 +40,12 @@ const Dashboard = () => {
   }, []);
 
   const handleRideCreated = (newRide) => {
-    setPosts((prev) => [
-      newRide,
-      ...prev
-    ]);
-
+    if (newRide.type === "RIDE_OFFER") {
+      setPosts((prev) => [
+        newRide,
+        ...prev
+      ]);
+    }
     setShowCreateRide(false);
   };
 

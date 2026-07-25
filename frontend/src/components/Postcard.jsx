@@ -78,14 +78,18 @@ const PostCard = ({ post, isJoined }) => {
             : "N/A"}
         </div>
 
-        <div>
-          <strong>Seats:</strong> {post.seats ?? "N/A"}
-        </div>
+        {post.type === "RIDE_OFFER" && (
+          <>
+            <div>
+              <strong>Seats:</strong> {post.seats ?? "N/A"}
+            </div>
 
-        <div>
-          <strong>Price:</strong>{" "}
-          {post.price != null ? `$${post.price}` : "Free"}
-        </div>
+            <div>
+              <strong>Price:</strong>{" "}
+              {post.price != null ? `$${post.price}` : "Free"}
+            </div>
+          </>
+        )}
 
       </div>
 
@@ -98,8 +102,8 @@ const PostCard = ({ post, isJoined }) => {
             disabled={isJoined}
             onClick={handleJoinRide}
             className={`px-4 py-2 rounded ${isJoined
-                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                : "bg-purple-600 text-white"
+              ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+              : "bg-purple-600 text-white"
               }`}
           >
             {isJoined ? "Joined" : "Join Ride"}
