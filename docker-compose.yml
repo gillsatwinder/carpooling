@@ -15,6 +15,7 @@ services:
       VITE_API_URL: http://localhost:8080
       CHOKIDAR_USEPOLLING: true
       WATCHPACK_POLLING: true
+      VITE_GEOAPIFY_API_KEY: cd31543b74ea4f0d99576b66f8db3301
     command: npm run dev -- --host 0.0.0.0
 
     volumes:

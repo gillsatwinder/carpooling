@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createPost, updatePost } from "../hooks/user.hooks";
+import LocationAutocomplete from "./LocationAutoComplete";
 import {
   Car,
   MapPin,
@@ -66,24 +67,24 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
 
   const isOffer = tab === "OFFER";
   const isFormValid = (() => {
-  const commonFieldsValid =
-    form.title.trim() &&
-    form.pickup_location.trim() &&
-    form.destination.trim() &&
-    form.ride_datetime;
+    const commonFieldsValid =
+      form.title.trim() &&
+      form.pickup_location.trim() &&
+      form.destination.trim() &&
+      form.ride_datetime;
 
-  if (!commonFieldsValid) return false;
+    if (!commonFieldsValid) return false;
 
-  if (isOffer) {
-    return (
-      Number(form.seats) > 0 &&
-      form.price !== "" &&
-      Number(form.price) >= 0
-    );
-  }
+    if (isOffer) {
+      return (
+        Number(form.seats) > 0 &&
+        form.price !== "" &&
+        Number(form.price) >= 0
+      );
+    }
 
-  return true;
-})();
+    return true;
+  })();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -92,8 +93,8 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isFormValid) {
-    alert("Please fill in all required fields.");
-    return;
+      alert("Please fill in all required fields.");
+      return;
     }
     try {
       setLoading(true);
@@ -150,17 +151,15 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
       <div className="p-6 pb-0">
         <div className="relative flex bg-slate-100 rounded-xl p-1">
           <div
-            className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-lg bg-[#16213E] shadow-sm transition-transform duration-300 ease-out ${
-              isOffer ? "translate-x-[calc(100%+8px)]" : "translate-x-0"
-            }`}
+            className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-lg bg-[#16213E] shadow-sm transition-transform duration-300 ease-out ${isOffer ? "translate-x-[calc(100%+8px)]" : "translate-x-0"
+              }`}
           />
           <button
             type="button"
             disabled={isEdit}
             onClick={() => setTab("REQUEST")}
-            className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-              !isOffer ? "text-white" : "text-slate-500 hover:text-slate-700"
-            } ${isEdit ? "cursor-not-allowed opacity-70" : ""}`}
+            className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-colors ${!isOffer ? "text-white" : "text-slate-500 hover:text-slate-700"
+              } ${isEdit ? "cursor-not-allowed opacity-70" : ""}`}
           >
             <Navigation2 size={15} />
             Request a ride
@@ -169,9 +168,8 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
             type="button"
             disabled={isEdit}
             onClick={() => setTab("OFFER")}
-            className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-              isOffer ? "text-white" : "text-slate-500 hover:text-slate-700"
-            } ${isEdit ? "cursor-not-allowed opacity-70" : ""}`}
+            className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-colors ${isOffer ? "text-white" : "text-slate-500 hover:text-slate-700"
+              } ${isEdit ? "cursor-not-allowed opacity-70" : ""}`}
           >
             <Car size={15} />
             Offer a ride
@@ -210,12 +208,11 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
                 size={16}
                 className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
               />
-              <input
+              <LocationAutocomplete
                 name="pickup_location"
                 value={form.pickup_location}
                 onChange={handleChange}
                 placeholder="Enter pickup location"
-                className="w-full rounded-lg border border-slate-200 pl-9 pr-3.5 py-2.5 text-sm text-[#16213E] placeholder:text-slate-400 outline-none transition focus:border-[#0F9D8E] focus:ring-4 focus:ring-[#0F9D8E]/10"
               />
             </div>
           </div>
@@ -230,12 +227,11 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
                 size={16}
                 className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
               />
-              <input
+              <LocationAutocomplete
                 name="destination"
                 value={form.destination}
                 onChange={handleChange}
                 placeholder="Enter destination"
-                className="w-full rounded-lg border border-slate-200 pl-9 pr-3.5 py-2.5 text-sm text-[#16213E] placeholder:text-slate-400 outline-none transition focus:border-[#0F9D8E] focus:ring-4 focus:ring-[#0F9D8E]/10"
               />
             </div>
           </div>
@@ -337,12 +333,11 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
           <button
             type="submit"
             disabled={loading || !isFormValid}
-            className={`flex-1 flex items-center justify-center gap-2 text-white text-sm font-semibold py-3 rounded-lg transition-colors ${
-            loading || !isFormValid
-                ? "bg-slate-400 cursor-not-allowed"
-                : "bg-[#16213E] hover:bg-[#1E2A4A]"
-            }`}
-            >
+            className={`flex-1 flex items-center justify-center gap-2 text-white text-sm font-semibold py-3 rounded-lg transition-colors ${loading || !isFormValid
+              ? "bg-slate-400 cursor-not-allowed"
+              : "bg-[#16213E] hover:bg-[#1E2A4A]"
+              }`}
+          >
             {loading ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
