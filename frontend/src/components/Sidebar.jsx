@@ -63,7 +63,7 @@ const Sidebar = () => {
             }`
           }
         >
-          My Requested Rides
+          Joined Rides
         </NavLink>
 
          <NavLink
