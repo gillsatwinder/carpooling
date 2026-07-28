@@ -1,9 +1,9 @@
-import { useMemo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAllRideOffers } from "../hooks/user.hooks";
 import { getMyJoinedRides } from "../hooks/rideParticipant.hooks";
 import CreateRide from "../components/CreateRide"
 import DashboardSection from "../components/DashboardSection";
-import { Plus, X } from "lucide-react";
+import { Plus} from "lucide-react";
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);

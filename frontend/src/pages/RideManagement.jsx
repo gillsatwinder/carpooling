@@ -1,10 +1,9 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { getMyPosts, cancelPost, closePost, deletePost } from "../hooks/user.hooks";
-import CreateRide from "../components/CreateRide";
 import RideCard from "../components/RideCard"
+import CreateRide from "../components/CreateRide";
 import {
   Car,
-  Plus,
   Loader2,
   Inbox,
   AlertCircle,
@@ -19,9 +18,9 @@ const RideManagement = () => {
   const [filter, setFilter] = useState("ACTIVE"); // ACTIVE | CLOSED | CANCELLED
   const [cancellingId, setCancellingId] = useState(null);
   const [closingId, setClosingId] = useState(null);
-
   const [showForm, setShowForm] = useState(false);
   const [editingRide, setEditingRide] = useState(null);
+
   const [confirmCancelId, setConfirmCancelId] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
 
@@ -45,7 +44,7 @@ const RideManagement = () => {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+   
     fetchRides();
   }, [fetchRides]);
 
@@ -71,11 +70,6 @@ const RideManagement = () => {
       : filter === "CLOSED"
         ? closedRides
         : cancelledRides;
-
-  const openCreate = () => {
-    setEditingRide(null);
-    setShowForm(true);
-  };
 
   const openEdit = (ride) => {
     setEditingRide(ride);
@@ -173,7 +167,7 @@ const RideManagement = () => {
           </div>
         </div>
 
-        
+
 
         {/* Filter chips */}
         <div className="flex gap-2 mb-4">
@@ -286,6 +280,18 @@ const RideManagement = () => {
                 {cancellingId === confirmCancelId ? "Cancelling..." : "Cancel ride"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {showForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-2xl">
+            <CreateRide
+              mode="edit"
+              ride={editingRide}
+              onSuccess={handleFormSuccess}
+              onClose={closeForm}
+            />
           </div>
         </div>
       )}

@@ -3,13 +3,7 @@ import { createPost, updatePost } from "../hooks/user.hooks";
 import LocationAutocomplete from "./LocationAutoComplete";
 import {
   Car,
-  MapPin,
   Navigation2,
-  Calendar,
-  Users,
-  DollarSign,
-  Loader2,
-  Send,
   X,
 } from "lucide-react";
 
@@ -156,7 +150,7 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(22,33,62,0.06),0_12px_32px_-16px_rgba(22,33,62,0.15)] border border-slate-100 overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(22,33,62,0.06),0_12px_32px_-16px_rgba(22,33,62,0.15)] border border-slate-100 overflow-visible">
       {/* Header */}
       <div className="flex items-center justify-between px-6 pt-6">
         <h2 className="text-lg font-bold text-[#16213E]">
@@ -459,7 +453,7 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
 
         {/* Actions */}
         <div className="flex justify-between pt-6">
-          
+
 
           {step > 1 ? (
             <button
@@ -474,18 +468,24 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
           )}
 
           {step < totalSteps ? (
-            <button 
-            type="button" 
-            onClick={nextStep}
-            className="px-6 py-3 rounded-lg bg-[#16213E] text-white"
+            <button
+              type="button"
+              onClick={nextStep}
+              disabled={loading}
+              className="px-6 py-3 rounded-lg bg-[#16213E] text-white disabled:opacity-60"
             >
               Continue
             </button>
           ) : (
-            <button type="button" onClick={handleSubmit}
-            className="px-6 py-3 rounded-lg bg-[#16213E] text-white"
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={loading}
+              className="px-6 py-3 rounded-lg bg-[#16213E] text-white disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Post Ride
+              {loading
+                ? (isEdit ? "Updating..." : "Posting...")
+                : (isEdit ? "Update Ride" : "Post Ride")}
             </button>
           )}
 

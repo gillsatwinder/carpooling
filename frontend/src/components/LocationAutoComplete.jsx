@@ -9,18 +9,23 @@ export default function LocationAutocomplete({
   placeholder,
   name,
 }) {
-  const [query, setQuery] = useState(value || "");
+
   const [suggestions, setSuggestions] = useState([]);
+  const [selectedValue, setSelectedValue] = useState("");
+
 
   useEffect(() => {
-    setQuery(value);
-  }, [value]);
 
-  useEffect(() => {
-    if (query.length < 3) {
-      setSuggestions([]);
+
+    if (!value || value.length < 3) {
       return;
     }
+    // Don't search if the user just selected this value
+    if (value === selectedValue) {
+      return;
+    }
+
+    const controller = new AbortController();
 
     const timeout = setTimeout(async () => {
       try {
@@ -28,7 +33,7 @@ export default function LocationAutocomplete({
           "https://api.geoapify.com/v1/geocode/autocomplete",
           {
             params: {
-              text: query,
+              text: value,
               apiKey: API_KEY,
               limit: 5,
             },
@@ -41,16 +46,21 @@ export default function LocationAutocomplete({
       }
     }, 300);
 
-    return () => clearTimeout(timeout);
-  }, [query]);
+    return () => {
+      controller.abort();
+      clearTimeout(timeout);
+    };
+  }, [value, selectedValue]);
+
+  const visibleSuggestions =
+    value && value.length >= 3 ? suggestions : [];
 
   return (
     <div className="relative">
       <input
         name={name}
-        value={query}
+        value={value ?? ""}
         onChange={(e) => {
-          setQuery(e.target.value);
           onChange({
             target: {
               name,
@@ -62,23 +72,25 @@ export default function LocationAutocomplete({
         className="w-full rounded-lg border border-slate-200 px-3 py-2.5"
       />
 
-      {suggestions.length > 0 && (
+      {visibleSuggestions.length > 0 && (
         <div className="absolute z-50 mt-1 w-full bg-white border rounded-lg shadow-lg max-h-64 overflow-y-auto">
-          {suggestions.map((item) => (
+          {visibleSuggestions.map((item) => (
             <button
               type="button"
               key={item.properties.place_id}
-              onClick={() => {
-                setQuery(item.properties.formatted);
+              onMouseDown={(e) => {
+                e.preventDefault();
+                const formatted = item.properties.formatted;
+
+                setSelectedValue(formatted);
+                setSuggestions([]);
 
                 onChange({
                   target: {
                     name,
-                    value: item.properties.formatted,
+                    value: formatted,
                   },
                 });
-
-                setSuggestions([]);
               }}
               className="w-full text-left px-4 py-3 hover:bg-slate-100"
             >
