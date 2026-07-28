@@ -1,11 +1,9 @@
 import { motion } from "framer-motion";
 import {
-  User,
   Pencil,
   Check,
   X,
   Loader2,
-  FileText,
 } from "lucide-react";
 
 import ProfileField from "./ProfileField";
@@ -22,7 +20,10 @@ export default function ProfileCard({
   onCancel,
   onSave,
   fields,
+  inputMode,
+  fieldErrors = {},
 }) {
+  const hasErrors = Object.values(fieldErrors).some(Boolean);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -32,10 +33,6 @@ export default function ProfileCard({
     >
       {/* Profile Header */}
       <div className="flex flex-col items-center">
-        {/* Default user icon */}
-        <div className="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center border-2 border-purple-200">
-          <User className="text-purple-400" size={36} />
-        </div>
 
         {/* User Name */}
         <p className="mt-3 text-lg font-semibold text-gray-900">
@@ -64,7 +61,7 @@ export default function ProfileCard({
 
       {/* Profile Fields */}
       <div className="mt-8 space-y-5">
-        {fields.map(({ key, label, icon: Icon, type }) => (
+        {fields.map(({ key, label, icon: Icon, type, options }) => (
           <ProfileField
             key={key}
             label={label}
@@ -72,22 +69,15 @@ export default function ProfileCard({
             name={key}
             value={draft[key] || ""}
             type={type}
+            options={options}
             isEditing={isEditing}
+            inputMode={inputMode}
             onChange={onChange}
+            error={fieldErrors[key]}
           />
         ))}
 
-        {/* Bio */}
-        <ProfileField
-          label="Bio"
-          icon={FileText}
-          name="bio"
-          value={draft.bio || ""}
-          isEditing={isEditing}
-          onChange={onChange}
-          multiline
-          placeholder="Tell others a bit about yourself"
-        />
+   
       </div>
 
       {/* Action Buttons */}
@@ -105,7 +95,7 @@ export default function ProfileCard({
 
             <button
               onClick={onSave}
-              disabled={saving}
+              disabled={saving || hasErrors}
               className="flex items-center gap-1.5 px-6 py-2.5 rounded-lg bg-purple-600 text-white font-semibold hover:bg-purple-700 transition shadow-md disabled:opacity-50"
             >
               {saving ? (

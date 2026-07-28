@@ -5,21 +5,25 @@ const completeOnboarding = async (req, res) => {
   try {
     const userId = req.user.id;
   
-    const { sex,age, graduation_date } = req.body;
-
-      // Validate required fields
-    if (!sex || !age || !graduation_date) {
-      return error(
-    res,
-    400,
-    "Sex, age, and graduation_date are required"
-  );
-}
-
-    const updatedUser = await userService.updateProfileById(userId, {
+    const {
       sex,
       age,
       graduation_date,
+      Bio,
+      University,
+      PhoneNumber,
+      ProfilePicture,
+    } = req.body;
+
+
+    const updatedUser = await userService.updateProfileById(userId, {
+        sex,
+        age,
+        graduation_date,
+        Bio,
+        University,
+        PhoneNumber,
+        ProfilePicture,
     });
 
     return success(
@@ -29,10 +33,11 @@ const completeOnboarding = async (req, res) => {
       updatedUser
     );
   } catch (err) {
-     return error(res, 400, err.message);
+     return error(res, 500, err.message);
   }
 };
 
+// Retrieves the logged-in user's profile information.
 const getProfile = async (req, res) => {
   try {
     const userid= req.user.id;
@@ -44,10 +49,11 @@ const getProfile = async (req, res) => {
        user
     );
   } catch (err) {
-    return error(res, 400, err.message);
+    return error(res, 500, err.message);
   }
 };
 
+// Updates editable user profile fields.
 const updateProfile = async(req, res )=> {
   try {
     const userid= req.user.id;
@@ -61,7 +67,44 @@ const updateProfile = async(req, res )=> {
     );
   }
   catch(err) {
-    return error(res, 400, err.message);
+    return error(res, 500, err.message);
+  }
+};
+
+//update the profielpicture
+const updateProfilePicture = async (req, res) => {
+  try {
+    
+    const userId = req.user.id;
+    // Check if user uploaded a file
+    if (!req.file) {
+      return error(
+        res,
+        400,
+        "Profile picture is required"
+      );
+    }
+    const profilePicture =
+      `/uploads/profile/${req.file.filename}`;
+    const updatedUser =
+      await userService.updateProfilePicture(
+        userId,
+        profilePicture
+      );
+    return success(
+      res,
+      200,
+      "Profile picture updated successfully",
+      updatedUser
+    );
+
+  } catch(err) {
+    return error(
+      res,
+      400,
+      err.message
+    );
+
   }
 };
 
@@ -69,4 +112,5 @@ module.exports = {
   completeOnboarding,
   getProfile,
   updateProfile,
+  updateProfilePicture,
 };
