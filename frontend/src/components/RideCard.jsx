@@ -3,7 +3,7 @@ import {
   acceptParticipant,
   rejectParticipant,
 } from "../hooks/rideParticipant.hooks";
-import {  useState } from "react";
+import { useState } from "react";
 import {
   Car,
   MapPin,
@@ -93,6 +93,7 @@ const RideCard = ({ ride, onEdit, onCancel, onClose, onDelete, cancellingId, clo
       alert(err.message);
     }
   };
+  const isOpen = status === "OPEN";
 
   return (
     <div
@@ -158,16 +159,14 @@ const RideCard = ({ ride, onEdit, onCancel, onClose, onDelete, cancellingId, clo
 
       {/* Actions */}
       <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-100">
-        {!isCancelled ? (
+
+        {/* OPEN */}
+        {isOpen && (
           <>
             <button
               type="button"
-              disabled={isClosed}
               onClick={() => onEdit(ride)}
-              className={`flex-1 flex items-center justify-center gap-1.5 text-sm font-medium border border-slate-200 rounded-lg py-2 transition-colors ${isClosed
-                ? "opacity-40 cursor-not-allowed"
-                : "text-[#16213E] hover:bg-slate-50"
-                }`}
+              className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium border border-slate-200 rounded-lg py-2 hover:bg-slate-50"
             >
               <Pencil size={13} />
               Edit
@@ -187,16 +186,14 @@ const RideCard = ({ ride, onEdit, onCancel, onClose, onDelete, cancellingId, clo
               </button>
             )}
 
-            {!isClosed && (
-              <button
-                type="button"
-                onClick={() => onClose(id)}
-                disabled={isClosing}
-                className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-orange-600 border border-orange-100 rounded-lg py-2 hover:bg-orange-50"
-              >
-                {isClosing ? "Closing..." : "Close"}
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => onClose(id)}
+              disabled={isClosing}
+              className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-orange-600 border border-orange-100 rounded-lg py-2 hover:bg-orange-50"
+            >
+              {isClosing ? "Closing..." : "Close"}
+            </button>
 
             <button
               type="button"
@@ -212,7 +209,37 @@ const RideCard = ({ ride, onEdit, onCancel, onClose, onDelete, cancellingId, clo
               {isCancelling ? "Cancelling..." : "Cancel"}
             </button>
           </>
-        ) : (
+        )}
+
+        {/* CLOSED */}
+        {isClosed && (
+          <>
+            <button
+              type="button"
+              onClick={() => {}}
+              className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-green-600 border border-green-100 rounded-lg py-2 hover:bg-green-50"
+            >
+              Reopen
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onDelete(id)}
+              disabled={isDeleting}
+              className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-red-600 border border-red-100 rounded-lg py-2 hover:bg-red-50"
+            >
+              {isDeleting ? (
+                <Loader2 size={13} className="animate-spin" />
+              ) : (
+                <Ban size={13} />
+              )}
+              {isDeleting ? "Deleting..." : "Delete"}
+            </button>
+          </>
+        )}
+
+        {/* CANCELLED */}
+        {isCancelled && (
           <button
             type="button"
             onClick={() => onDelete(id)}
