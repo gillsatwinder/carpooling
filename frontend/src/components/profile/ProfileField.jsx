@@ -81,6 +81,7 @@ export default function ProfileField({
                 year: "numeric",
                 month: "long",
                 day: "numeric",
+                timeZone: "UTC",
               })
             ) : isSelect ? (
               options.find((opt) => opt.value === value)?.label || value
