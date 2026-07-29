@@ -21,7 +21,7 @@ export default function Login() {
     setError("");
 
     try {
-      const res = await loginUser({ email, password });
+      const res = await loginUser({ email, password }); 
 
       const token = res?.data?.token;
       const onboarded = res?.data?.onboarded;

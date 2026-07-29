@@ -27,8 +27,9 @@ const Sidebar = () => {
           Dashboard
         </NavLink>
 
+       
         <NavLink
-          to="/profile"
+          to="/ride-requests"
           className={({ isActive }) =>
             `flex items-center px-4 py-2 rounded-lg transition ${
               isActive
@@ -37,7 +38,7 @@ const Sidebar = () => {
             }`
           }
         >
-          My Profile
+          Ride Requests
         </NavLink>
 
         <NavLink
@@ -50,8 +51,34 @@ const Sidebar = () => {
             }`
           }
         >
-          Ride Management
+          My Rides
         </NavLink>
+        <NavLink
+          to="/my-requested-rides"
+          className={({ isActive }) =>
+            `flex items-center px-4 py-2 rounded-lg transition ${
+              isActive
+                ? "bg-purple-100 text-purple-700 font-medium"
+                : "text-gray-600 hover:bg-gray-100"
+            }`
+          }
+        >
+          Joined Rides
+        </NavLink>
+
+         <NavLink
+          to="/profile"
+          className={({ isActive }) =>
+            `flex items-center px-4 py-2 rounded-lg transition ${
+              isActive
+                ? "bg-purple-100 text-purple-700 font-medium"
+                : "text-gray-600 hover:bg-gray-100"
+            }`
+          }
+        >
+          My Profile
+        </NavLink>
+
 
 
       </nav>

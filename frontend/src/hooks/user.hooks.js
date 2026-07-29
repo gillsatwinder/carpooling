@@ -7,7 +7,15 @@ export async function submitOnboarding(data) {
   });
 }
 export async function getAllPosts() {
-  return await fetchClient("/posts");
+  return await fetchClient("/posts?status=OPEN");
+}
+
+export async function getAllRideOffers() {
+  return await fetchClient("/posts?status=OPEN&type=RIDE_OFFER");
+}
+
+export async function getAllRideRequests() {
+  return await fetchClient("/posts?status=OPEN&type=RIDE_REQUEST");
 }
 
 export async function getPostById(postId) {
@@ -44,6 +52,12 @@ export async function closePost(postId) {
     method: "PATCH",
   });
 } 
+
+export async function deletePost(postId) {
+  return await fetchClient(`/posts/${postId}`, {
+    method: "DELETE",
+  });
+}
 
 export async function getProfile() {
   return await fetchClient('/user/profile'); 

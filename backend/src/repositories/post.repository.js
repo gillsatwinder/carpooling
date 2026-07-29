@@ -17,7 +17,7 @@ exports.findAll = async (filters) => {
     include: [
       {
         model: User,
-        as: "user",
+        as: "owner",
         attributes: ["id", "name", "email"],
       },
     ],
@@ -28,7 +28,7 @@ exports.findAll = async (filters) => {
 // Get by user
 exports.findByUserId = async (userId) => {
   return await Post.findAll({
-    where: { user_id: userId },
+    where: { owner_id: userId },
     order: [["created_at", "DESC"]],
   });
 };
@@ -39,7 +39,7 @@ exports.findById = async (id) => {
     include: [
       {
         model: User,
-        as: "user",
+        as: "owner",
         attributes: ["id", "name", "email"],
       },
     ],
@@ -51,3 +51,7 @@ exports.update = async (id, data) => {
   await Post.update(data, { where: { id } });
   return await exports.findById(id);
 };
+
+exports.delete = async (id) => {
+  return await Post.destroy({ where: { id } });
+}; 

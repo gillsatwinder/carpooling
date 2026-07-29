@@ -72,3 +72,23 @@ exports.closePost = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.deletePost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const result = await postService.deletePost(id, userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Post deleted successfully",
+      data: result,
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+};

@@ -10,7 +10,7 @@ const Post = sequelize.define(
       autoIncrement: true,
     },
 
-    user_id: {
+    owner_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },

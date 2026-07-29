@@ -223,4 +223,65 @@ describe("Post Controller", () => {
       });
     });
   });
+
+  describe("deletePost", () => {
+    it("should delete a post successfully", async () => {
+      const deletedPost = {
+        id: 1,
+        status: "DELETED",
+      };
+
+      req.params.id = 1;
+
+      postService.deletePost.mockResolvedValue(deletedPost);
+
+      await postController.deletePost(req, res);
+
+      expect(postService.deletePost).toHaveBeenCalledWith(1, 1);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        success: true,
+        message: "Post deleted successfully",
+        data: deletedPost,
+      });
+    });
+
+    it("should return custom status code if service throws one", async () => {
+      req.params.id = 1;
+
+      const error = new Error("Post not found");
+      error.statusCode = 404;
+
+      postService.deletePost.mockRejectedValue(error);
+
+      await postController.deletePost(req, res);
+
+      expect(postService.deletePost).toHaveBeenCalledWith(1, 1);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "Post not found",
+      });
+    });
+
+    it("should return 500 if service throws without statusCode", async () => {
+      req.params.id = 1;
+
+      postService.deletePost.mockRejectedValue(
+        new Error("Internal Server Error")
+      );
+
+      await postController.deletePost(req, res);
+
+      expect(postService.deletePost).toHaveBeenCalledWith(1, 1);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "Internal Server Error",
+      });
+    });
+  });
 });

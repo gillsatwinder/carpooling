@@ -1,36 +1,54 @@
-import { useMemo,useEffect,useState } from "react";
-import { getAllPosts } from "../hooks/user.hooks";
+import { useEffect, useState } from "react";
+import { getAllRideOffers } from "../hooks/user.hooks";
+import { getMyJoinedRides } from "../hooks/rideParticipant.hooks";
+import CreateRide from "../components/CreateRide"
 import DashboardSection from "../components/DashboardSection";
-
+import { Plus} from "lucide-react";
 const Dashboard = () => {
-   const [posts, setPosts] = useState([]);
-   const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-   useEffect(() => {
-    async function fetchPosts() {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [joinedRideIds, setJoinedRideIds] = useState([]);
+  const [showCreateRide, setShowCreateRide] = useState(false);
+  useEffect(() => {
+    async function fetchData() {
       try {
-        const data = await getAllPosts();
-        setPosts(data);
+
+        const [postsData, joinedData] = await Promise.all([
+          getAllRideOffers(),
+          getMyJoinedRides()
+        ]);
+
+        setPosts(postsData);
+
+        const joinedIds = joinedData.map(
+          (ride) => ride.post_id
+        );
+
+        setJoinedRideIds(joinedIds);
+
       } catch (err) {
         console.error(err);
-        setError(err?.message || "Failed to fetch posts");
+        setError(err?.message || "Failed to fetch data");
+
       } finally {
         setLoading(false);
       }
     }
 
-    fetchPosts();
+    fetchData();
   }, []);
 
+  const handleRideCreated = (newRide) => {
+    if (newRide.type === "RIDE_OFFER") {
+      setPosts((prev) => [
+        newRide,
+        ...prev
+      ]);
+    }
+    setShowCreateRide(false);
+  };
 
-  const groupedPosts = useMemo(() => {
-    return {
-      rideOffers: posts.filter((post) => post.type === "RIDE_OFFER"),
-      rideRequests: posts.filter((post) => post.type === "RIDE_REQUEST"),
-      generalAds: posts.filter((post) => post.type === "GENERAL_AD"),
-    };
-  }, [posts]);
 
   if (loading)
     return (
@@ -49,25 +67,71 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
 
-      <h1 className="text-3xl font-bold mb-8">
-        Dashboard
-      </h1>
+      <div className="flex justify-between items-center mb-8">
+
+        <h1 className="text-3xl font-bold">
+          Available Ride Offers
+        </h1>
+
+        <button
+          onClick={() => setShowCreateRide(true)}
+          className="
+            flex items-center gap-2
+            bg-[#16213E]
+            text-white
+            px-5 py-3
+            rounded-xl
+            hover:opacity-90
+            transition
+          "
+        >
+          <Plus size={20} />
+          Post a Ride
+        </button>
+      </div>
+
 
       <DashboardSection
         title="Ride Offers"
-        posts={groupedPosts.rideOffers}
+        posts={posts}
+        joinedRideIds={joinedRideIds}
       />
 
-      <DashboardSection
-        title="Ride Requests"
-        posts={groupedPosts.rideRequests}
-      />
+      {/* Create Ride Modal */}
+      {showCreateRide && (
+        <div
+          className="
+            fixed inset-0
+            bg-black/40
+            flex
+            items-center
+            justify-center
+            z-50
+            p-4
+          "
+        >
 
-      <DashboardSection
-        title="General Ads"
-        posts={groupedPosts.generalAds}
-      />
+          <div
+            className="
+              bg-white
+              rounded-2xl
+              w-full
+              max-w-2xl
+              max-h-[90vh]
+              overflow-y-auto
+              shadow-xl
+            "
+          >
 
+            <CreateRide
+              onClose={() => setShowCreateRide(false)}
+              onSuccess={handleRideCreated}
+            />
+
+          </div>
+
+        </div>
+      )}
     </div>
   );
 };
