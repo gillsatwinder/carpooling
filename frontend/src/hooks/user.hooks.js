@@ -55,3 +55,13 @@ export async function updateProfile(data) {
     body: JSON.stringify(data),
   }); 
 }
+export const uploadProfilePicture = async (file) => {
+
+  const formData = new FormData();
+
+  formData.append( "profilePicture",file);
+  return await fetchClient("/user/profile/photo", {
+    method: "PUT",
+    body: formData,
+  });
+};

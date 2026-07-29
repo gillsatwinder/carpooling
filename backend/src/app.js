@@ -1,14 +1,11 @@
 const express = require('express');
 const db = require('./models');
 const cors = require('cors');
+const path = require("path");
 require('dotenv').config();
 
 const app = express();
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-  
 app.use(cors({
   origin: [
     'http://localhost:5173',
@@ -17,16 +14,24 @@ app.use(cors({
   credentials: true
 }));
 
+// Middleware
+app.use(express.json({limit: "10mb"}));
+app.use(express.urlencoded({extended: true,limit: "10mb"}));
+  
+
 
 // Import routes
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
 const postRoutes = require('./routes/posts.routes');
+//const universtityRoutes = require('./routes/university.routes');
 
 // Routes
 app.use('/auth', authRoutes);
 app.use('/user',userRoutes);
 app.use('/posts', postRoutes);
+//app.use('/api/universities' , universtityRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Health check
 app.get('/api/health', (req, res) => {

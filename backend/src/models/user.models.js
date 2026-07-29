@@ -32,6 +32,26 @@ const User = sequelize.define('User', {
     type: DataTypes.DATE,
     allowNull: true,
   },
+  Bio:{
+      type: DataTypes.STRING(500),
+      default: "",
+      allowNull: true,
+      validate:{
+        len:[0,500],
+      }
+  },
+  University: {
+    type: DataTypes.STRING,
+    allowNull:true
+  },
+  PhoneNumber: {
+    type: DataTypes.STRING,
+    allowNUll:true
+  },
+  ProfilePicture: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
   
 }, {
   timestamps: false,

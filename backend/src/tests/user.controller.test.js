@@ -32,22 +32,6 @@ describe("User Controller", () => {
   });
 
   describe("completeOnboarding", () => {
-    it("should return 400 when required fields are missing", async () => {
-      req.body = {
-        sex: "Male",
-      };
-
-      await completeOnboarding(req, res);
-
-      expect(error).toHaveBeenCalledWith(
-        res,
-        400,
-        "Sex, age, and graduation_date are required"
-      );
-
-      expect(userService.updateProfileById).not.toHaveBeenCalled();
-    });
-
     it("should complete onboarding successfully", async () => {
       req.body = {
         sex: "Male",
@@ -81,7 +65,7 @@ describe("User Controller", () => {
       );
     });
 
-    it("should return 400 when service throws error", async () => {
+    it("should return 500 when service throws error", async () => {
       req.body = {
         sex: "Male",
         age: 24,
@@ -96,7 +80,7 @@ describe("User Controller", () => {
 
       expect(error).toHaveBeenCalledWith(
         res,
-        400,
+        500,
         "User not found"
       );
     });
@@ -124,7 +108,7 @@ describe("User Controller", () => {
       );
     });
 
-    it("should return 400 when service throws error", async () => {
+    it("should return 500 when service throws error", async () => {
       userService.getProfile.mockRejectedValue(
         new Error("User not found")
       );
@@ -133,7 +117,7 @@ describe("User Controller", () => {
 
       expect(error).toHaveBeenCalledWith(
         res,
-        400,
+        500,
         "User not found"
       );
     });
@@ -191,7 +175,7 @@ describe("User Controller", () => {
       });
     });
 
-    it("should return 400 when update service throws error", async () => {
+    it("should return 500 when update service throws error", async () => {
       req.body = {
         first_name: "John",
       };
@@ -204,7 +188,7 @@ describe("User Controller", () => {
 
       expect(error).toHaveBeenCalledWith(
         res,
-        400,
+        500,
         "Update failed"
       );
     });

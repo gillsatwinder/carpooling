@@ -6,10 +6,13 @@ import {useAuth} from "../context/useAuth";
 
 export default function Onboarding() {
   const [form, setForm] = useState({
-    fullName: "",
+    name: "",
     age: "",
     sex: "",
     graduation_date: "",
+    Bio: "",
+    University: "",
+    PhoneNumber: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -60,14 +63,17 @@ export default function Onboarding() {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
+           {/* Name */}
           <input
-            name="fullName"
+            name="name"
             placeholder="Full Name"
-            value={form.fullName}
+            value={form.name}
             onChange={handleChange}
-            className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="border rounded-lg p-3"
           />
 
+
+          {/* Age */}
           <input
             name="age"
             type="number"
@@ -77,25 +83,73 @@ export default function Onboarding() {
             className="border rounded-lg p-3"
           />
 
+
+          {/* Gender */}
           <select
             name="sex"
             value={form.sex}
             onChange={handleChange}
             className="border rounded-lg p-3"
           >
-            <option value="">Select Gender</option>
-            <option value="M">Male</option>
-            <option value="F">Female</option>
-            <option value="Other">Other</option>
+            <option value=""> Select Gender</option>
+            <option value="M">  Male</option>
+            <option value="F"> Female</option>
+            <option value="Other"> Other</option>
           </select>
 
+
+            {/* Graduation Date with placeholder overlay */}
+          <div className="relative">
+
+            <input
+              name="graduation_date"
+              type="date"
+              value={form.graduation_date}
+              onChange={handleChange}
+                className={`border rounded-lg p-3 w-full ${
+               !form.graduation_date ? "text-transparent" : "text-gray-700"
+               }`}
+             />
+
+            {!form.graduation_date && (
+              <span className="absolute left-3 top-3 text-gray-400 pointer-events-none">
+                Expected Graduation Date
+              </span>
+            )}
+
+          </div>
+
+          {/* University */}
           <input
-            name="graduation_date"
-            type="date"
-            value={form.graduation_date}
+            name="University"
+            placeholder="University"
+            value={form.University}
             onChange={handleChange}
             className="border rounded-lg p-3"
           />
+
+
+          {/* Phone Number */}
+          <input
+            name="PhoneNumber"
+            placeholder="Phone Number"
+            value={form.PhoneNumber}
+            onChange={handleChange}
+            className="border rounded-lg p-3"
+          />
+
+
+          {/* Bio */}
+          <textarea
+            name="Bio"
+            placeholder="Tell us about yourself"
+            value={form.Bio}
+            onChange={handleChange}
+            maxLength={500}
+            rows={4}
+            className="border rounded-lg p-3"
+          />
+
 
           <button
             disabled={loading}
