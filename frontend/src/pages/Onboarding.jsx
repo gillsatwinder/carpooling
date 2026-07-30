@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { submitOnboarding } from "../hooks/user.hooks";
 import { useAuth } from "../context/useAuth";
 import Modal from "../components/Modal";
-import { useFormValidation } from "../hooks/useFormValidation";
+import { useFormValidation } from "../hooks/useformValidation";
 import { onboardingSchema } from "../components/utils/onboardingSchema";
 
 export default function Onboarding() {
