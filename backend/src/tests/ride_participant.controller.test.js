@@ -25,6 +25,9 @@ describe("Ride Participant Controller", () => {
       user: {
         id: 5,
       },
+      body: {
+        role: "PASSENGER",
+      },
     };
 
     res = mockResponse();
@@ -34,7 +37,11 @@ describe("Ride Participant Controller", () => {
 
   describe("joinRide", () => {
     it("should return 201 and created participant", async () => {
-      const participant = { id: 10, status: "PENDING" };
+      const participant = {
+        id: 10,
+        status: "PENDING",
+        role: "PASSENGER",
+      };
 
       rideParticipantService.joinRide.mockResolvedValue(participant);
 
@@ -42,8 +49,10 @@ describe("Ride Participant Controller", () => {
 
       expect(rideParticipantService.joinRide).toHaveBeenCalledWith(
         "1",
-        5
+        5,
+        "PASSENGER"
       );
+
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(participant);
     });
@@ -55,13 +64,18 @@ describe("Ride Participant Controller", () => {
 
       await rideParticipantController.joinRide(req, res);
 
+      expect(rideParticipantService.joinRide).toHaveBeenCalledWith(
+        "1",
+        5,
+        "PASSENGER"
+      );
+
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
         error: "Already joined",
       });
     });
   });
-
   describe("getParticipants", () => {
     it("should return participants", async () => {
       const participants = [{ id: 1 }, { id: 2 }];
