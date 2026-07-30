@@ -12,6 +12,7 @@ const completeOnboarding = async (req, res) => {
       Bio,
       University,
       PhoneNumber,
+      role,
       ProfilePicture,
     } = req.body;
 
@@ -24,6 +25,7 @@ const completeOnboarding = async (req, res) => {
         University,
         PhoneNumber,
         ProfilePicture,
+        role,
     });
 
     return success(

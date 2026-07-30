@@ -23,6 +23,23 @@ export default function ProfileCard({
   inputMode,
   fieldErrors = {},
 }) {
+
+    {fields.map(({ key, label, icon: Icon, type, options }) => (
+    <ProfileField
+      key={key}
+      label={label}
+      icon={Icon}
+      name={key}
+      value={draft[key] || ""}
+      type={type}
+      options={options}
+      isEditing={isEditing}
+      inputMode={inputMode}
+      onChange={onChange}
+      onBlur={onFieldBlur}
+      error={fieldErrors[key]}
+    />
+  ))}
   const hasErrors = Object.values(fieldErrors).some(Boolean);
   return (
     <motion.div

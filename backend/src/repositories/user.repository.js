@@ -21,6 +21,7 @@ const findById = async (id) => {
       "University",
       "PhoneNumber",
       "ProfilePicture",
+      "role",
       "created_at",
     ],
   });
@@ -37,6 +38,7 @@ const create = async ({
   Bio,
   University,
   PhoneNumber,
+  role,
   ProfilePicture,
 }) => {
   return await User.create({
@@ -49,6 +51,7 @@ const create = async ({
     Bio,
     University,
     PhoneNumber,
+    role,
     ProfilePicture,
   });
 };
@@ -67,6 +70,7 @@ const update = async (
       Bio,
       University,
       PhoneNumber,
+      role,
     },
     {
       where: { id },
