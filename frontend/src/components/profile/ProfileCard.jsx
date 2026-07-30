@@ -16,13 +16,31 @@ export default function ProfileCard({
   error,
   successMsg,
   onChange,
+  onFieldBlur,
   onEdit,
   onCancel,
   onSave,
   fields,
   inputMode,
   fieldErrors = {},
-}) {
+}){
+
+    {fields.map(({ key, label, icon: Icon, type, options }) => (
+    <ProfileField
+      key={key}
+      label={label}
+      icon={Icon}
+      name={key}
+      value={draft[key] || ""}
+      type={type}
+      options={options}
+      isEditing={isEditing}
+      inputMode={inputMode}
+      onChange={onChange}
+      onBlur={onFieldBlur}
+      error={fieldErrors[key]}
+    />
+  ))}
   const hasErrors = Object.values(fieldErrors).some(Boolean);
   return (
     <motion.div

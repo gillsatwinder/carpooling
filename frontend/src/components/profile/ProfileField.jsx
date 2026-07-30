@@ -6,6 +6,7 @@ export default function ProfileField({
   type = "text",
   isEditing,
   onChange,
+  onBlur,
   placeholder,
   options = [],
   error,
@@ -27,6 +28,7 @@ export default function ProfileField({
             rows={3}
             value={value || ""}
             onChange={onChange}
+            onBlur={onBlur}
             placeholder={placeholder}
             aria-invalid={!!error}
             className={`w-full px-4 py-2.5 rounded-lg border text-gray-900 focus:outline-none focus:ring-2 focus:border-transparent resize-none ${
@@ -40,6 +42,7 @@ export default function ProfileField({
             name={name}
             value={value || ""}
             onChange={onChange}
+            onBlur={onBlur}
             aria-invalid={!!error}
             className={`w-full px-4 py-2.5 rounded-lg border text-gray-900 focus:outline-none focus:ring-2 focus:border-transparent bg-white ${
               error
@@ -60,6 +63,7 @@ export default function ProfileField({
             name={name}
             value={type === "date" && value ? value.split("T")[0] : value || ""}
             onChange={onChange}
+            onBlur={onBlur}
             placeholder={placeholder}
             aria-invalid={!!error}
             className={`w-full px-4 py-2.5 rounded-lg border text-gray-900 focus:outline-none focus:ring-2 focus:border-transparent ${

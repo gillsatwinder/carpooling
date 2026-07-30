@@ -52,6 +52,10 @@ const User = sequelize.define('User', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  role: {
+    type: DataTypes.ENUM('DRIVER', 'PASSENGER', 'BOTH'),
+    defaultValue:"PASSENGER",
+  },
   
 }, {
   timestamps: false,

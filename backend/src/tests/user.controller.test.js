@@ -37,6 +37,11 @@ describe("User Controller", () => {
         sex: "Male",
         age: 24,
         graduation_date: "2027-05-15",
+        Bio: "Third-year CS student",
+        University: "State University",
+        PhoneNumber: "5551234567",
+        role: "DRIVER",
+        ProfilePicture: "",
       };
 
       const updatedUser = {
@@ -44,6 +49,7 @@ describe("User Controller", () => {
         sex: "Male",
         age: 24,
         graduation_date: "2027-05-15",
+        role: "DRIVER",
         onboarded: true,
       };
 
@@ -55,6 +61,51 @@ describe("User Controller", () => {
         sex: "Male",
         age: 24,
         graduation_date: "2027-05-15",
+        Bio: "Third-year CS student",
+        University: "State University",
+        PhoneNumber: "5551234567",
+        role: "DRIVER",
+        ProfilePicture: "",
+      });
+
+      expect(success).toHaveBeenCalledWith(
+        res,
+        200,
+        "Onboarding completed successfully",
+        updatedUser
+      );
+    });
+
+    it("should pass role through even when other optional fields are omitted", async () => {
+      req.body = {
+        sex: "Female",
+        age: 22,
+        graduation_date: "2026-12-01",
+        role: "PASSENGER",
+      };
+
+      const updatedUser = {
+        id: 1,
+        sex: "Female",
+        age: 22,
+        graduation_date: "2026-12-01",
+        role: "PASSENGER",
+        onboarded: true,
+      };
+
+      userService.updateProfileById.mockResolvedValue(updatedUser);
+
+      await completeOnboarding(req, res);
+
+      expect(userService.updateProfileById).toHaveBeenCalledWith(1, {
+        sex: "Female",
+        age: 22,
+        graduation_date: "2026-12-01",
+        Bio: undefined,
+        University: undefined,
+        PhoneNumber: undefined,
+        role: "PASSENGER",
+        ProfilePicture: undefined,
       });
 
       expect(success).toHaveBeenCalledWith(
@@ -70,6 +121,7 @@ describe("User Controller", () => {
         sex: "Male",
         age: 24,
         graduation_date: "2027-05-15",
+        role: "BOTH",
       };
 
       userService.updateProfileById.mockRejectedValue(
@@ -92,6 +144,7 @@ describe("User Controller", () => {
         id: 1,
         email: "john@university.edu",
         name: "John Doe",
+        role: "DRIVER",
       };
 
       userService.getProfile.mockResolvedValue(user);
@@ -156,6 +209,35 @@ describe("User Controller", () => {
       );
     });
 
+    it("should update role along with other profile fields", async () => {
+      req.body = {
+        name: "John Doe",
+        role: "BOTH",
+      };
+
+      const updatedUser = {
+        id: 1,
+        name: "John Doe",
+        role: "BOTH",
+      };
+
+      userService.updateProfile.mockResolvedValue(updatedUser);
+
+      await updateProfile(req, res);
+
+      expect(userService.updateProfile).toHaveBeenCalledWith(1, {
+        name: "John Doe",
+        role: "BOTH",
+      });
+
+      expect(success).toHaveBeenCalledWith(
+        res,
+        200,
+        "user profile updated",
+        updatedUser
+      );
+    });
+
     it("should ignore email and password fields", async () => {
       req.body = {
         email: "new@email.com",
@@ -172,6 +254,25 @@ describe("User Controller", () => {
 
       expect(userService.updateProfile).toHaveBeenCalledWith(1, {
         first_name: "John",
+      });
+    });
+
+    it("should ignore email and password fields even when role is included", async () => {
+      req.body = {
+        email: "new@email.com",
+        password: "123456",
+        role: "DRIVER",
+      };
+
+      userService.updateProfile.mockResolvedValue({
+        id: 1,
+        role: "DRIVER",
+      });
+
+      await updateProfile(req, res);
+
+      expect(userService.updateProfile).toHaveBeenCalledWith(1, {
+        role: "DRIVER",
       });
     });
 

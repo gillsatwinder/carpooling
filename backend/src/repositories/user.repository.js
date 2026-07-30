@@ -21,6 +21,7 @@ const findById = async (id) => {
       "University",
       "PhoneNumber",
       "ProfilePicture",
+      "role",
       "created_at",
     ],
   });
@@ -37,6 +38,7 @@ const create = async ({
   Bio,
   University,
   PhoneNumber,
+  role,
   ProfilePicture,
 }) => {
   return await User.create({
@@ -49,6 +51,7 @@ const create = async ({
     Bio,
     University,
     PhoneNumber,
+    role,
     ProfilePicture,
   });
 };
@@ -56,7 +59,7 @@ const create = async ({
 // Updates editable user profile fields using the user's ID.
 const update = async (
   id,
-  { name, age, sex, graduation_date, Bio, University, PhoneNumber}
+  { name, age, sex, graduation_date, Bio, University, PhoneNumber,role}
 ) => {
   const [affectedRows, updatedRows] = await User.update(
     {
@@ -67,6 +70,7 @@ const update = async (
       Bio,
       University,
       PhoneNumber,
+      role,
     },
     {
       where: { id },
