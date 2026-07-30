@@ -6,7 +6,7 @@ import {
   isValidLength,
   isValidDate,
   isValidEmail,
-} from "../utils/validators";
+} from "../utils/validator";
 
 export const profileSchema = {
   name: [isRequired],

@@ -92,10 +92,16 @@ const Profile = () => {
     }));
   }
 
+  // A plain check, no event needed
+  function shouldShowNotificationDisclaimer(roleValue) {
+    return roleValue === "DRIVER" || roleValue === "BOTH";
+  }
+
+
   // Generic blur handler across all fields; only acts on "role".
   function handleFieldBlur(e) {
     const { name, value } = e.target;
-    if (name === "role" && (value === "DRIVER" || value === "BOTH")) {
+    if (name === "role" && shouldShowNotificationDisclaimer(value)){
       setShowNotificationDisclaimer(true);
     }
   }
@@ -121,13 +127,22 @@ const Profile = () => {
       newErrors[key] = validateField(key, draft[key] ?? "");
     });
     setFieldErrors(newErrors);
-
+    
     const hasErrors = Object.values(newErrors).some(Boolean);
     if (hasErrors) {
       setError("Please fix the errors above before saving.");
       return;
     }
+     
+    const roleChanged = draft.role !== profile.role;
+      if (roleChanged && shouldShowNotificationDisclaimer(draft.role)) {
+        setShowNotificationDisclaimer(true);
+        return; // stop here — wait for "Got it" before actually saving
+  }
+    await actuallySave();
+}
 
+async function actuallySave() {
     setSaving(true);
 
     try {
@@ -242,7 +257,10 @@ const Profile = () => {
 
             <Modal
               isOpen={showNotificationDisclaimer}
-              onClose={() => setShowNotificationDisclaimer(false)}
+              onClose={async () => {
+                setShowNotificationDisclaimer(false);
+                await actuallySave();
+  }}
             >
               <h2 id="modal-title">Heads up</h2>
               <p>

@@ -16,13 +16,14 @@ export default function ProfileCard({
   error,
   successMsg,
   onChange,
+  onFieldBlur,
   onEdit,
   onCancel,
   onSave,
   fields,
   inputMode,
   fieldErrors = {},
-}) {
+}){
 
     {fields.map(({ key, label, icon: Icon, type, options }) => (
     <ProfileField

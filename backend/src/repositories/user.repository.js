@@ -59,7 +59,7 @@ const create = async ({
 // Updates editable user profile fields using the user's ID.
 const update = async (
   id,
-  { name, age, sex, graduation_date, Bio, University, PhoneNumber}
+  { name, age, sex, graduation_date, Bio, University, PhoneNumber,role}
 ) => {
   const [affectedRows, updatedRows] = await User.update(
     {
