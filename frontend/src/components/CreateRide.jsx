@@ -91,7 +91,9 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
         return form.ride_datetime;
 
       case 4:
-        if (!isOffer) return true;
+        if (!isOffer) {
+          return !form.seats || Number(form.seats) > 0;
+        }
 
         return (
           Number(form.seats) > 0 &&
@@ -131,7 +133,7 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
         ride_datetime: form.ride_datetime
           ? new Date(form.ride_datetime).toISOString()
           : null,
-        seats: isOffer ? Number(form.seats) || 1 : null,
+        seats: Number(form.seats) || 1,
         price: isOffer && form.price !== "" ? Number(form.price) : null,
       };
 
@@ -324,20 +326,26 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
 
           </div>
         )}
-        {step === 4 && isOffer && (
+        {step === 4 && (
 
           <div className="space-y-6">
 
-            <h3 className="text-xl font-semibold">
-              Ride Details
-            </h3>
+            <div>
+              <h3 className="text-xl font-semibold text-[#16213E]">
+                {isOffer ? "Ride Details" : "Ride Requirements"}
+              </h3>
+
+              <p className="text-slate-500 mt-1">
+                {isOffer
+                  ? "Tell riders how many seats you have available."
+                  : "Let drivers know how many seats you need or how many seats you’re willing to share."}
+              </p>
+            </div>
 
             <div>
 
               <label className="block mb-2 font-medium">
-
-                Seats
-
+                {isOffer ? "Available Seats" : "Seats Needed"}
               </label>
 
               <input
@@ -346,29 +354,37 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
                 name="seats"
                 value={form.seats}
                 onChange={handleChange}
+                placeholder={isOffer ? "Number of available seats" : "Number of seats needed"}
                 className="w-full rounded-lg border border-slate-200 px-4 py-3"
               />
 
-            </div>
-
-            <div>
-
-              <label className="block mb-2 font-medium">
-
-                Price per rider
-
-              </label>
-
-              <input
-                type="number"
-                min={0}
-                name="price"
-                value={form.price}
-                onChange={handleChange}
-                className="w-full rounded-lg border border-slate-200 px-4 py-3"
-              />
+              {!isOffer && (
+                <p className="text-xs text-slate-500 mt-2">
+                  Optional. If you don't specify, we'll assume 1 seat.
+                </p>
+              )}
 
             </div>
+
+            {isOffer && (
+              <div>
+
+                <label className="block mb-2 font-medium">
+                  Price per rider
+                </label>
+
+                <input
+                  type="number"
+                  min={0}
+                  name="price"
+                  value={form.price}
+                  onChange={handleChange}
+                  placeholder="0 for free"
+                  className="w-full rounded-lg border border-slate-200 px-4 py-3"
+                />
+
+              </div>
+            )}
 
           </div>
 
@@ -420,28 +436,18 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
 
               </p>
 
+              <p>
+                <strong>
+                  {isOffer ? "Available Seats: " : "Seats Needed: "}
+                </strong>
+                {Number(form.seats) || 1}
+              </p>
+
               {isOffer && (
-
-                <>
-
-                  <p>
-
-                    <strong>Seats: </strong>
-
-                    {form.seats}
-
-                  </p>
-
-                  <p>
-
-                    <strong>Price: </strong>
-
-                    ${form.price}
-
-                  </p>
-
-                </>
-
+                <p>
+                  <strong>Price: </strong>
+                  ${form.price}
+                </p>
               )}
 
             </div>

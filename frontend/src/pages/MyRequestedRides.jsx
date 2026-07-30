@@ -90,29 +90,30 @@ const RequestedRideCard = ({
 
       {/* Header */}
 
-      <div className="flex justify-between items-start mb-4">
-
-        <div>
-
+      <div>
+        <div className="flex items-center gap-2">
           <h2 className="font-semibold text-lg text-[#16213E]">
             {ride.title || "Ride"}
           </h2>
 
-          <p className="text-sm text-slate-500">
-            Requested by you
-          </p>
-
+          <span
+            className={`text-xs px-2 py-1 rounded-full font-small ${ride.type === "RIDE_OFFER"
+                ? "bg-purple-100 text-purple-700"
+                : "bg-blue-100 text-blue-700"
+              }`}
+          >
+            {ride.type === "RIDE_OFFER" ? "Ride Offer" : "Ride Request"}
+          </span>
+          <span
+            className={`text-xs px-2.5 py-1 rounded-full font-medium ${STATUS_STYLES[rideRequest.status]}`}
+          >
+            {rideRequest.status}
+          </span>
         </div>
 
-
-        <span
-          className={`text-xs px-3 py-1 rounded-full font-semibold ${STATUS_STYLES[rideRequest.status]
-            }`}
-        >
-          {rideRequest.status}
-        </span>
-
-
+        <p className="text-sm text-slate-500 mt-1">
+          Requested by you
+        </p>
       </div>
 
 
@@ -270,7 +271,7 @@ const MyRequestedRides = () => {
 
 
   const handleLeave = async (participantId) => {
-    
+
 
     await leaveRide(participantId);
 

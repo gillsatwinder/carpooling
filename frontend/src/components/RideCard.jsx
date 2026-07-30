@@ -172,19 +172,23 @@ const RideCard = ({ ride, onEdit, onCancel, onClose, onDelete, cancellingId, clo
               Edit
             </button>
 
-            {isOffer && (
-              <button
-                type="button"
-                onClick={handleViewParticipants}
-                className="flex-1 text-sm font-medium text-[#16213E] border border-slate-200 rounded-lg py-2 hover:bg-slate-50"
-              >
-                {loadingParticipants
-                  ? "Loading..."
-                  : showParticipants
-                    ? "Hide Participants"
-                    : "View Participants"}
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => {
+                if (showParticipants) {
+                  setShowParticipants(false);
+                } else {
+                  handleViewParticipants();
+                }
+              }}
+              className="flex-1 text-sm font-medium text-[#16213E] border border-slate-200 rounded-lg py-2 hover:bg-slate-50"
+            >
+              {loadingParticipants
+                ? "Loading..."
+                : showParticipants
+                  ? "Hide Participants"
+                  : "View Participants"}
+            </button>
 
             <button
               type="button"
@@ -216,7 +220,7 @@ const RideCard = ({ ride, onEdit, onCancel, onClose, onDelete, cancellingId, clo
           <>
             <button
               type="button"
-              onClick={() => {}}
+              onClick={() => { }}
               className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-green-600 border border-green-100 rounded-lg py-2 hover:bg-green-50"
             >
               Reopen

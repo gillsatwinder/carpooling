@@ -8,9 +8,11 @@ exports.joinRide = async (postId, userId, role) => {
   if (!post) {
     throw new Error("Post not found");
   }
-  // Only ride offers can be joined
-  if (post.type !== "RIDE_OFFER") {
-    throw new Error("You can only join ride offers");
+  // If the post is a ride request, the user must join as a passenger or driver
+  if (post.type === "RIDE_OFFER") {
+    if (role == "DRIVER") {
+      throw new Error("You cannot join a ride offer as a driver");
+    }
   }
 
   // Only open rides can be joined
