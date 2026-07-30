@@ -36,7 +36,7 @@ const login = async ({ email, password}) => {
   const user = await userRepository.findByEmail(email);
 
   if (!user) {
-    throw new Error("Invalid email or password");
+    throw new Error("User not registered");
   }
  // const hashedPassword = await hashPassword(password);
 

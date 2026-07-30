@@ -49,15 +49,15 @@ const RequestedRideCard = ({
   const ride = rideRequest.post;
 
 
-  const handleCancel = async()=>{
+  const handleCancel = async () => {
 
-    try{
+    try {
 
       setLoading(true);
 
       await onCancel(rideRequest.id);
 
-    }finally{
+    } finally {
 
       setLoading(false);
 
@@ -66,15 +66,15 @@ const RequestedRideCard = ({
   };
 
 
-  const handleLeave = async()=>{
+  const handleLeave = async () => {
 
-    try{
+    try {
 
       setLoading(true);
 
       await onLeave(rideRequest.id);
 
-    }finally{
+    } finally {
 
       setLoading(false);
 
@@ -90,30 +90,30 @@ const RequestedRideCard = ({
 
       {/* Header */}
 
-      <div className="flex justify-between items-start mb-4">
-
-        <div>
-
+      <div>
+        <div className="flex items-center gap-2">
           <h2 className="font-semibold text-lg text-[#16213E]">
             {ride.title || "Ride"}
           </h2>
 
-          <p className="text-sm text-slate-500">
-            Requested by you
-          </p>
-
+          <span
+            className={`text-xs px-2 py-1 rounded-full font-small ${ride.type === "RIDE_OFFER"
+                ? "bg-purple-100 text-purple-700"
+                : "bg-blue-100 text-blue-700"
+              }`}
+          >
+            {ride.type === "RIDE_OFFER" ? "Ride Offer" : "Ride Request"}
+          </span>
+          <span
+            className={`text-xs px-2.5 py-1 rounded-full font-medium ${STATUS_STYLES[rideRequest.status]}`}
+          >
+            {rideRequest.status}
+          </span>
         </div>
 
-
-        <span
-          className={`text-xs px-3 py-1 rounded-full font-semibold ${
-            STATUS_STYLES[rideRequest.status]
-          }`}
-        >
-          {rideRequest.status}
-        </span>
-
-
+        <p className="text-sm text-slate-500 mt-1">
+          Requested by you
+        </p>
       </div>
 
 
@@ -123,26 +123,26 @@ const RequestedRideCard = ({
       <div className="space-y-2 text-sm text-slate-600">
 
         <div className="flex gap-2">
-          <MapPin size={15}/>
+          <MapPin size={15} />
           {ride.pickup_location}
         </div>
 
 
         <div className="flex gap-2">
-          <Navigation2 size={15}/>
+          <Navigation2 size={15} />
           {ride.destination}
         </div>
 
 
         <div className="flex gap-2">
-          <Calendar size={15}/>
+          <Calendar size={15} />
           {formatDateTime(ride.ride_datetime)}
         </div>
 
 
         {ride.seats && (
           <div className="flex gap-2">
-            <Users size={15}/>
+            <Users size={15} />
             {ride.seats} seats
           </div>
         )}
@@ -168,8 +168,8 @@ const RequestedRideCard = ({
 
             {
               loading
-              ? <Loader2 size={15} className="animate-spin"/>
-              : <XCircle size={15}/>
+                ? <Loader2 size={15} className="animate-spin" />
+                : <XCircle size={15} />
             }
 
             Cancel Request
@@ -181,31 +181,25 @@ const RequestedRideCard = ({
 
 
 
-      {
-        rideRequest.status === "ACCEPTED" && (
+      {["ACCEPTED", "REJECTED"].includes(rideRequest.status) && (
+        <button
+          onClick={handleLeave}
+          disabled={loading}
+          className="
+          mt-5 w-full flex items-center justify-center gap-2
+          border border-orange-200 text-orange-600
+          rounded-lg py-2 hover:bg-orange-50
+        "
+        >
+          {loading ? (
+            <Loader2 size={15} className="animate-spin" />
+          ) : (
+            <LogOut size={15} />
+          )}
 
-          <button
-            onClick={handleLeave}
-            disabled={loading}
-            className="
-              mt-5 w-full flex items-center justify-center gap-2
-              border border-orange-200 text-orange-600
-              rounded-lg py-2 hover:bg-orange-50
-            "
-          >
-
-            {
-              loading
-              ? <Loader2 size={15} className="animate-spin"/>
-              : <LogOut size={15}/>
-            }
-
-            Leave Ride
-
-          </button>
-
-        )
-      }
+          Leave Ride
+        </button>
+      )}
 
 
     </div>
@@ -220,17 +214,17 @@ const RequestedRideCard = ({
 const MyRequestedRides = () => {
 
 
-  const [rides,setRides] = useState([]);
+  const [rides, setRides] = useState([]);
 
-  const [loading,setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const [error,setError] = useState(null);
+  const [error, setError] = useState(null);
 
 
 
-  const fetchRides = useCallback(async()=>{
+  const fetchRides = useCallback(async () => {
 
-    try{
+    try {
 
       setLoading(true);
 
@@ -239,34 +233,34 @@ const MyRequestedRides = () => {
       setRides(data);
 
 
-    }catch(err){
+    } catch (err) {
 
       setError(
         err.message || "Failed to load rides"
       );
 
-    }finally{
+    } finally {
 
       setLoading(false);
 
     }
 
 
-  },[]);
+  }, []);
 
 
 
-  useEffect(()=>{
+  useEffect(() => {
 
     fetchRides();
 
-  },[fetchRides]);
+  }, [fetchRides]);
 
 
 
 
 
-  const handleCancel = async(participantId)=>{
+  const handleCancel = async (participantId) => {
 
     await cancelRequest(participantId);
 
@@ -276,7 +270,8 @@ const MyRequestedRides = () => {
 
 
 
-  const handleLeave = async(participantId)=>{
+  const handleLeave = async (participantId) => {
+
 
     await leaveRide(participantId);
 
@@ -288,11 +283,11 @@ const MyRequestedRides = () => {
 
 
 
-  if(loading){
+  if (loading) {
 
     return (
       <div className="flex justify-center py-20">
-        <Loader2 className="animate-spin"/>
+        <Loader2 className="animate-spin" />
       </div>
     );
 
@@ -300,7 +295,7 @@ const MyRequestedRides = () => {
 
 
 
-  if(error){
+  if (error) {
 
     return (
       <div className="text-red-500 text-center mt-10">
@@ -331,7 +326,7 @@ const MyRequestedRides = () => {
 
             <div className="bg-white rounded-xl p-10 text-center">
 
-              <Inbox className="mx-auto text-slate-300 mb-3"/>
+              <Inbox className="mx-auto text-slate-300 mb-3" />
 
               <p className="text-slate-500">
                 You have not requested any rides yet
@@ -345,7 +340,7 @@ const MyRequestedRides = () => {
             <div className="space-y-4">
 
               {
-                rides.map((ride)=>(
+                rides.map((ride) => (
                   <RequestedRideCard
                     key={ride.id}
                     rideRequest={ride}

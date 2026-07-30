@@ -31,7 +31,8 @@ export async function fetchClient(endpoint, options = {}) {
       );
     }
 
-    const error = new Error(data?.error || "Request failed");
+    const error = new Error(data?.message || data?.error ||   "Request failed");
+
 
     error.status = res.status;
     error.data = data;
