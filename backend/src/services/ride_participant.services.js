@@ -1,7 +1,7 @@
 const postRepository = require("../repositories/post.repository");
 const participantRepository = require("../repositories/ride_participant.repository");
 
-exports.joinRide = async (postId, userId) => {
+exports.joinRide = async (postId, userId, role) => {
   // Find the post
   const post = await postRepository.findById(postId);
 
@@ -38,7 +38,7 @@ exports.joinRide = async (postId, userId) => {
   return await participantRepository.create({
     post_id: postId,
     user_id: userId,
-    role: "PASSENGER",
+    role: role,
     status: "PENDING",
   });
 };
@@ -188,11 +188,6 @@ exports.leaveRide = async(
  if(participant.user_id !== userId)
     throw new Error("Unauthorized");
 
-
- if(participant.status !== "ACCEPTED")
-    throw new Error(
-      "You are not in this ride"
-    );
 
  return await participantRepository.delete(
     participantId

@@ -287,6 +287,9 @@ const RideCard = ({ ride, onEdit, onCancel, onClose, onDelete, cancellingId, clo
                     <p className="text-xs text-slate-500">
                       {participant.participant?.email}
                     </p>
+                    <p className="text-xs text-slate-500">
+                      {participant.role}
+                    </p>
 
                     <span className="text-xs text-slate-500">
                       {participant.status}

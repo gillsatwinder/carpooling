@@ -1,10 +1,13 @@
 const rideParticipantService = require("../services/ride_participant.services");
 
 exports.joinRide = async (req, res) => {
+  const { role } = req.body;
+  console.log("Role received:", role);
   try {
     const participant = await rideParticipantService.joinRide(
       req.params.postId,
-      req.user.id
+      req.user.id,
+      role
     );
 
     res.status(201).json(participant);
