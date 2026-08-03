@@ -1,11 +1,21 @@
 const postRepository = require("../repositories/post.repository");
+const notificationHelper =require("../utils/notification.helper")
 
 exports.createPost = async (userId, data) => {
-  return await postRepository.create({
+  const post = await postRepository.create({
     ...data,
     owner_id: userId,
     status: "OPEN",
   });
+  // Only notify drivers for ride requests
+    if (post.type === "RIDE_REQUEST") {
+
+        await notificationHelper.notifyDriversAboutRideRequest(post); 
+
+    }
+
+
+  return post;
 };
 
 exports.getAllPosts = async (filters) => {

@@ -24,6 +24,7 @@ app.use(express.urlencoded({extended: true,limit: "10mb"}));
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
 const postRoutes = require('./routes/posts.routes');
+const notificationRoutes = require("./routes/notification.routes");
 
 
 const participantRoutes= require('./routes/ride_participant.routes')
@@ -33,6 +34,7 @@ const participantRoutes= require('./routes/ride_participant.routes')
 app.use('/auth', authRoutes);
 app.use('/user',userRoutes);
 app.use('/posts', postRoutes);
+app.use('/notifications', notificationRoutes);
 
 //app.use('/api/universities' , universtityRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));

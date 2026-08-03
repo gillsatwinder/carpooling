@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import NotificationBell from "./NotificationBell";
 
 const Sidebar = () => {
   return (
@@ -65,6 +66,8 @@ const Sidebar = () => {
         >
           Joined Rides
         </NavLink>
+
+        <NotificationBell />
 
          <NavLink
           to="/profile"

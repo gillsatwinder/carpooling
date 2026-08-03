@@ -1,4 +1,16 @@
 const { User } = require("../models");
+const { Op } = require("sequelize");
+
+
+const findAllDrivers = async () => {
+
+    return await User.findAll({
+        where: {
+            role: "DRIVER"
+        }
+    });
+
+};
 
 // Finds a user by email address, mainly used for authentication/login checks.
 const findByEmail = async (email) => {
@@ -116,6 +128,19 @@ const updateById = async (id, data) => {
   });
 };
 
+const findAllDriversExceptUser = async (userId) => {
+
+    return await User.findAll({
+        where: {
+            role: "DRIVER",
+            id: {
+                [Op.ne]: userId
+            }
+        }
+    });
+
+};
+
 module.exports = {
   findByEmail,
   findById,
@@ -124,4 +149,6 @@ module.exports = {
   remove,
   updateById,
   updateProfilePicture,
+  findAllDrivers,
+  findAllDriversExceptUser,
 };

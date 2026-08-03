@@ -3,6 +3,7 @@ const sequelize = require("../config/database");
 const User = require("./user.models");
 const Post = require("./post.models");
 const RideParticipant=require("./ride_participant.models")
+const Notification= require("./notification.models")
 
 // --------------------
 // Associations
@@ -31,6 +32,18 @@ User.hasMany(RideParticipant, {
     as: "rideParticipations",
 });
 
+// User → Notifications
+User.hasMany(Notification, {
+  foreignKey: "user_id",
+  as: "notifications",
+});
+
+Notification.belongsTo(User, {
+  foreignKey: "user_id",
+  as: "user",
+});
+
+
 // If you add later:
 // User.hasMany(Message)
 // Post.hasMany(Conversation)
@@ -40,4 +53,5 @@ module.exports = {
   User,
   Post,
   RideParticipant,
+  Notification,
 };
