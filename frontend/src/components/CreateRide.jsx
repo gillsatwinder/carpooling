@@ -82,8 +82,17 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
   };
   const totalSteps = isOffer ? 5 : 4;
 
+const isPickupValid =
+    form.pickup_location &&
+    form.pickup_lat &&
+    form.pickup_lng;
 
 
+const isDestinationValid =
+    form.destination &&
+    form.destination_lat &&
+    form.destination_lng;
+    
   const canContinue = () => {
     switch (step) {
       case 1:
@@ -91,8 +100,8 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
 
       case 2:
         return (
-          form.pickup_location.trim() &&
-          form.destination.trim()
+          isPickupValid &&
+        isDestinationValid
         );
 
       case 3:
@@ -511,7 +520,7 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
             <button
               type="button"
               onClick={nextStep}
-              disabled={loading}
+              disabled={loading || !canContinue()}
               className="px-6 py-3 rounded-lg bg-[#16213E] text-white disabled:opacity-60"
             >
               Continue
