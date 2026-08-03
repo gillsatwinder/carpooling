@@ -11,7 +11,11 @@ const emptyForm = {
   title: "",
   description: "",
   pickup_location: "",
+  pickup_lat: null,
+  pickup_lng: null,
   destination: "",
+  destination_lat: null,
+  destination_lng: null,
   ride_datetime: "",
   seats: 1,
   price: "",
@@ -35,7 +39,11 @@ const toFormState = (ride) => ({
   title: ride?.title ?? "",
   description: ride?.description ?? "",
   pickup_location: ride?.pickup_location ?? "",
+  pickup_lat: ride?.pickup_lat ?? null,
+  pickup_lng: ride?.pickup_lng ?? null,
   destination: ride?.destination ?? "",
+  destination_lat: ride?.destination_lat ?? null,
+  destination_lng: ride?.destination_lng ?? null,
   ride_datetime: toDatetimeLocalValue(ride?.ride_datetime),
   seats: ride?.seats ?? 1,
   price: ride?.price ?? "",
@@ -74,8 +82,17 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
   };
   const totalSteps = isOffer ? 5 : 4;
 
+const isPickupValid =
+    form.pickup_location &&
+    form.pickup_lat &&
+    form.pickup_lng;
 
 
+const isDestinationValid =
+    form.destination &&
+    form.destination_lat &&
+    form.destination_lng;
+    
   const canContinue = () => {
     switch (step) {
       case 1:
@@ -83,8 +100,8 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
 
       case 2:
         return (
-          form.pickup_location.trim() &&
-          form.destination.trim()
+          isPickupValid &&
+        isDestinationValid
         );
 
       case 3:
@@ -129,7 +146,11 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
         title: `${form.pickup_location} → ${form.destination}`,
         description: form.description,
         pickup_location: form.pickup_location,
+        pickup_lat: form.pickup_lat,
+        pickup_lng: form.pickup_lng,
         destination: form.destination,
+        destination_lat: form.destination_lat,
+        destination_lng: form.destination_lng,
         ride_datetime: form.ride_datetime
           ? new Date(form.ride_datetime).toISOString()
           : null,
@@ -269,8 +290,19 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
               <LocationAutocomplete
                 name="pickup_location"
                 value={form.pickup_location}
-                onChange={handleChange}
+                onSelect={(location) => {
+
+                  setForm(prev => ({
+                    ...prev,
+
+                    pickup_location: location.formatted,
+                    pickup_lat: location.lat,
+                    pickup_lng: location.lon
+                  }));
+
+                }}
                 placeholder="Pickup location"
+                onChange={handleChange}
               />
 
             </div>
@@ -284,8 +316,19 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
               <LocationAutocomplete
                 name="destination"
                 value={form.destination}
-                onChange={handleChange}
+                onSelect={(location) => {
+
+                  setForm(prev => ({
+                    ...prev,
+
+                    destination: location.formatted,
+                    destination_lat: location.lat,
+                    destination_lng: location.lon
+                  }));
+
+                }}
                 placeholder="Destination"
+                onChange={handleChange}
               />
 
             </div>
@@ -477,7 +520,7 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
             <button
               type="button"
               onClick={nextStep}
-              disabled={loading}
+              disabled={loading || !canContinue()}
               className="px-6 py-3 rounded-lg bg-[#16213E] text-white disabled:opacity-60"
             >
               Continue

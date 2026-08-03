@@ -39,8 +39,28 @@ const Post = sequelize.define(
       allowNull: true,
     },
 
+    pickup_lat: {
+      type: DataTypes.DECIMAL(10, 8),
+      allowNull: true,
+    },
+
+    pickup_lng: {
+      type: DataTypes.DECIMAL(11, 8),
+      allowNull: true,
+    },
+
     destination: {
       type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    destination_lat: {
+      type: DataTypes.DECIMAL(10, 8),
+      allowNull: true,
+    },
+
+    destination_lng: {
+      type: DataTypes.DECIMAL(11, 8),
       allowNull: true,
     },
 
