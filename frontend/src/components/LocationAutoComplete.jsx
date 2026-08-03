@@ -7,6 +7,7 @@ export default function LocationAutocomplete({
   value,
   onChange,
   placeholder,
+  onSelect,
   name,
 }) {
 
@@ -80,17 +81,17 @@ export default function LocationAutocomplete({
               key={item.properties.place_id}
               onMouseDown={(e) => {
                 e.preventDefault();
-                const formatted = item.properties.formatted;
+                const location = {
+                  formatted: item.properties.formatted,
+                  lat: item.properties.lat,
+                  lon: item.properties.lon,
+                };
 
-                setSelectedValue(formatted);
+
+                setSelectedValue(location.formatted);
                 setSuggestions([]);
 
-                onChange({
-                  target: {
-                    name,
-                    value: formatted,
-                  },
-                });
+                onSelect?.(location);
               }}
               className="w-full text-left px-4 py-3 hover:bg-slate-100"
             >
