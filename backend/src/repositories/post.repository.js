@@ -87,7 +87,17 @@ exports.searchNearbyPosts = async ({ lat, lng, date }) => {
     attributes: {
       include: [[distanceFormula, "distance"]],
     },
+
     where,
+
+    include: [
+      {
+        model: User,
+        as: "owner",
+        attributes: ["id", "name", "email"],
+      },
+    ],
+
     order: [[literal("distance"), "ASC"]],
   });
 };

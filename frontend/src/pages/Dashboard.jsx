@@ -76,82 +76,113 @@ const Dashboard = () => {
           {error}
         </div>
       )}
-      <div className="bg-white rounded-xl p-6 shadow mb-8">
+      <button
+        onClick={() => setShowCreateRide(true)}
+        className="
+        fixed
+        bottom-8
+        right-8
+        flex
+        items-center
+        gap-2
+        bg-[#16213E]
+        text-white
+        px-6
+        py-4
+        rounded-full
+        shadow-lg
+        hover:bg-[#1c2d55]
+        hover:shadow-xl
+        hover:-translate-y-0.5
+        transition-all
+        duration-200
+      "
+      >
+        <Plus size={22} />
+        <span className="font-medium whitespace-nowrap">
+          Create Ride
+        </span>
+      </button>
+      {/* Hero Search */}
+      <section className="max-w-6xl mx-auto px-6 pt-16">
 
-        <h2 className="text-xl font-semibold mb-4">
-          Find nearby rides
-        </h2>
-
-        <LocationAutocomplete
-          name="pickup"
-          value={pickupInput}
-          placeholder="Enter your pickup location"
-          onChange={(e) => {
-            setPickupInput(e.target.value);
-            setPickup(null);
-            setHasSearched(false);
-            setRideOffers([]);
-            setRideRequests([]);
-            setError(null);// invalidate previous selection if user edits text
-          }}
-          onSelect={(location) => {
-            setPickup(location);
-            setPickupInput(location.formatted);
-          }}
-        />
-
-        <button
-          onClick={handleSearch}
-          disabled={!pickup || loading}
-          className="mt-4 bg-[#16213E] text-white px-5 py-3 rounded-lg disabled:opacity-50"
-        >
-          {loading ? "Searching..." : "Search Nearby Rides"}
-        </button>
-      </div>
-
-      <div className="flex justify-between items-center mb-8">
-
-        <h1 className="text-3xl font-bold">
-          Available Ride Offers
+        <h1 className="text-5xl font-bold text-center text-[#16213E] mb-10">
+          Where are you heading?
         </h1>
 
-        <button
-          onClick={() => setShowCreateRide(true)}
-          className="
-            flex items-center gap-2
-            bg-[#16213E]
-            text-white
-            px-5 py-3
-            rounded-xl
-            hover:opacity-90
-            transition
-          "
-        >
-          <Plus size={20} />
-          Post a Ride
-        </button>
-      </div>
+        <div className="bg-white rounded-3xl shadow-lg p-4 flex gap-4 items-center">
 
+          <div className="flex-1">
+            <LocationAutocomplete
+              name="pickup"
+              value={pickupInput}
+              placeholder="Pickup location"
+              onChange={(e) => {
+                setPickupInput(e.target.value);
+                setPickup(null);
+                setHasSearched(false);
+                setRideOffers([]);
+                setRideRequests([]);
+                setError(null);
+              }}
+              onSelect={(location) => {
+                setPickup(location);
+                setPickupInput(location.formatted);
+              }}
+            />
+          </div>
 
-      {!hasSearched ? (
-        <div className="text-center py-10 text-gray-500">
-          Search for a pickup location to find nearby rides.
+          <button
+            onClick={handleSearch}
+            disabled={!pickup || loading}
+            className="
+          bg-[#16213E]
+          text-white
+          px-8
+          py-3
+          rounded-2xl
+          font-semibold
+          disabled:opacity-50
+        "
+          >
+            {loading ? "Searching..." : "Search Rides"}
+          </button>
+
         </div>
-      ) : (
-        <>
-          <DashboardSection
-            title="Nearby Ride Offers"
-            posts={rideOffers}
-            joinedRideIds={joinedRideIds}
-          />
 
-          <DashboardSection
-            title="Nearby Ride Requests"
-            posts={rideRequests}
-            joinedRideIds={joinedRideIds}
-          />
-        </>
-      )}
+      </section>
+
+      {/* Results */}
+
+      <section className="max-w-6xl mx-auto px-6 py-10">
+
+        {error && (
+          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-600">
+            {error}
+          </div>
+        )}
+
+        {!hasSearched ? (
+          <div className="text-center text-gray-500 py-16">
+            Search for a pickup location to discover nearby rides.
+          </div>
+        ) : (
+          <>
+            <DashboardSection
+              title="Nearby Ride Offers"
+              posts={rideOffers}
+              joinedRideIds={joinedRideIds}
+            />
+
+            <DashboardSection
+              title="Nearby Ride Requests"
+              posts={rideRequests}
+              joinedRideIds={joinedRideIds}
+            />
+          </>
+        )}
+
+      </section>
 
       {/* Create Ride Modal */}
       {showCreateRide && (
