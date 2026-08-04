@@ -3,6 +3,7 @@ import {
   joinRide,
   getParticipants,
 } from "../hooks/rideParticipant.hooks";
+import { User } from "lucide-react";
 
 const PostCard = ({ post, isJoined }) => {
   const [participants, setParticipants] = useState([]);
@@ -48,29 +49,103 @@ const PostCard = ({ post, isJoined }) => {
       setShowRoleSelection(true);
     }
   };
+  const getImageUrl = (image) => {
+    if (!image) {
+      return "/default-avatar.png";
+    }
 
+    return `${import.meta.env.VITE_API_URL}${image}`;
+  };
   return (
     <div className="bg-white rounded-xl shadow hover:shadow-lg transition p-5">
 
       {/* Header */}
-      <div className="flex justify-between items-start">
-        <div>
-          <h3 className="font-semibold text-lg">
-            {post.title}
-          </h3>
+      {/* Header */}
+      <div className="flex justify-between items-start mb-4">
 
-          {post.owner && (
-            <p className="text-sm text-gray-500 mt-1">
-              👤 {post.owner.name} • {post.owner.email}
+        {/* User */}
+        <div className="flex items-center gap-3">
+
+          <div className="
+      w-12 h-12 
+      rounded-full 
+      overflow-hidden 
+      bg-gray-200 
+      flex-shrink-0
+      flex items-center justify-center
+  ">
+
+            {post.owner?.ProfilePicture ? (
+              <img
+                src={getImageUrl(post.owner.ProfilePicture)}
+                alt={post.owner?.name || "User"}
+                className="
+          w-full
+          h-full
+          object-cover
+        "
+              />
+            ) : (
+              <User
+                className="w-7 h-7 text-gray-500"
+              />
+            )}
+
+          </div>
+
+
+          <div>
+
+            <p className="font-semibold text-gray-800">
+              {post.owner?.name || "Unknown User"}
             </p>
-          )}
+
+
+            <p className="text-xs text-gray-500">
+              Ride Owner
+            </p>
+
+            <p className="text-xs text-gray-500">
+              <span className="font-medium">Email:</span>{" "}
+              {post.owner?.email ? (
+                <a
+                  href={`mailto:${post.owner.email}`}
+                  className="text-purple-600 hover:underline"
+                >
+                  {post.owner.email}
+                </a>
+              ) : (
+                "Unknown User"
+              )}
+            </p>
+
+          </div>
+
         </div>
 
-        <span className="text-xs px-2 py-1 rounded bg-purple-100 text-purple-700">
+
+        {/* Ride Type */}
+        <span
+          className="
+      text-xs
+      px-3
+      py-1
+      rounded-full
+      bg-purple-100
+      text-purple-700
+      font-medium
+    "
+        >
           {post.type.replace("_", " ")}
         </span>
+
       </div>
 
+
+      {/* Ride Title */}
+      <h3 className="font-semibold text-lg text-gray-900">
+        {post.title}
+      </h3>
       {/* Description */}
       <p className="text-gray-600 mt-3">
         {post.description}
@@ -119,8 +194,8 @@ const PostCard = ({ post, isJoined }) => {
             disabled={isJoined}
             onClick={handleJoinClick}
             className={`px-4 py-2 rounded ${isJoined
-                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                : "bg-purple-600 text-white hover:bg-purple-700"
+              ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+              : "bg-purple-600 text-white hover:bg-purple-700"
               }`}
           >
             {isJoined ? "Joined" : "Join Ride"}
@@ -226,8 +301,8 @@ const PostCard = ({ post, isJoined }) => {
                 {/* Role */}
                 <span
                   className={`text-xs font-medium px-2.5 py-1 rounded-full ${participant.role === "DRIVER"
-                      ? "bg-purple-100 text-purple-700"
-                      : "bg-blue-100 text-blue-700"
+                    ? "bg-purple-100 text-purple-700"
+                    : "bg-blue-100 text-blue-700"
                     }`}
                 >
                   {participant.role}
@@ -236,12 +311,12 @@ const PostCard = ({ post, isJoined }) => {
                 {/* Status */}
                 <span
                   className={`text-xs font-medium px-2.5 py-1 rounded-full ${participant.status === "ACCEPTED"
-                      ? "bg-green-100 text-green-700"
-                      : participant.status === "REJECTED"
-                        ? "bg-red-100 text-red-700"
-                        : participant.status === "PENDING"
-                          ? "bg-yellow-100 text-yellow-700"
-                          : "bg-gray-100 text-gray-600"
+                    ? "bg-green-100 text-green-700"
+                    : participant.status === "REJECTED"
+                      ? "bg-red-100 text-red-700"
+                      : participant.status === "PENDING"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-gray-100 text-gray-600"
                     }`}
                 >
                   {participant.status}

@@ -19,7 +19,7 @@ exports.findAll = async (filters) => {
       {
         model: User,
         as: "owner",
-        attributes: ["id", "name", "email"],
+        attributes: ["id", "name", "email", "ProfilePicture"],
       },
     ],
     order: [["created_at", "DESC"]],
@@ -41,7 +41,7 @@ exports.findById = async (id) => {
       {
         model: User,
         as: "owner",
-        attributes: ["id", "name", "email"],
+        attributes: ["id", "name", "email", "ProfilePicture"],
       },
     ],
   });
@@ -94,7 +94,7 @@ exports.searchNearbyPosts = async ({ lat, lng, date }) => {
       {
         model: User,
         as: "owner",
-        attributes: ["id", "name", "email"],
+        attributes: ["id", "name", "email", "ProfilePicture"],
       },
     ],
 
