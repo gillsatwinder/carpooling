@@ -10,7 +10,8 @@ import AppLayout from "../layouts/AppLayout";
 import RideManagement from "../pages/RideManagement";
 import Profile from "../pages/Profile";
 import MyRequestedRides from "../pages/MyRequestedRides";
-import RideRequests from "../pages/RideRequests"
+import RideRequests from "../pages/RideRequests";
+import VerifyOtp from "../pages/VerifyOtp"
 
 function OnboardingRoute({ children }) {
   const { isAuthenticated, onboarded } = useAuth();
@@ -50,6 +51,7 @@ export default function AppRouter() {
 
         {/* Public Route */}
         <Route path="/register" element={<Register />} />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/login" element={<Login />} />
         
 

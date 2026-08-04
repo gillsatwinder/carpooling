@@ -64,6 +64,11 @@ services:
       DB_NAME: studentcarpool
       DB_USER: postgres
       DB_PASSWORD: postgres
+      SMTP_USER: satwinders0504@gmail.com
+      SMTP_PASS: mcso pofl tqdt asnc
+      EMAIL_FROM: satwinders0504@gmail.com
+
+      OTP_HASH_SECRET: 949226f0dba8ca71759a20bd7c3f0b9477a01153274bb0a3ac7167bc9ebce4f5
       CHOKIDAR_USEPOLLING: true
       WATCHPACK_POLLING: true
     

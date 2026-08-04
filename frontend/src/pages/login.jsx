@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { loginUser } from "../hooks/auth.hooks";
 import { useAuth } from "../context/useAuth";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -68,27 +70,49 @@ export default function Login() {
         </motion.div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <motion.input
-            whileFocus={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
-            type="email"
-            placeholder="University Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            required
-          />
+          <div className="flex flex-col gap-1">
+            <label htmlFor="email" className="text-sm font-medium text-gray-700">
+              University Email
+            </label>
+            <motion.input
+              id="email"
+              whileFocus={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              type="email"
+              placeholder="e.g. john@university.edu"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required
+            />
+          </div>
 
-          <motion.input
-            whileFocus={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            required
-          />
+          <div className="flex flex-col gap-1">
+            <label htmlFor="password" className="text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <div className="relative">
+              <motion.input
+                id="password"
+                whileFocus={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="border border-gray-200 rounded-xl p-3 pr-11 w-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
 
           <motion.button
             whileHover={{ scale: 1.03 }}
@@ -109,6 +133,18 @@ export default function Login() {
             </motion.p>
           )}
         </form>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="text-center text-sm text-gray-500 mt-4"
+        >
+          Don't have an account?{" "}
+          <Link to="/register" className="text-purple-600 font-medium hover:underline">
+            Sign up
+          </Link>
+        </motion.p>
       </motion.div>
     </div>
   );

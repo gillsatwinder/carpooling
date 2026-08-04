@@ -14,6 +14,20 @@ export async function loginUser({ email, password }) {
   });
 }
 
+export async function verifyOtp({ userId, otp }) {
+  return await fetchClient("/auth/verify-otp", {
+    method: "POST",
+    body: JSON.stringify({ userId, otp }),
+  });
+}
+
+export async function resendOtp({ email }) {
+  return await fetchClient("/auth/resend-otp", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
 export function logout() {
   // Remove the JWT token
   localStorage.removeItem("token");
