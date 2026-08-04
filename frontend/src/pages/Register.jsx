@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../hooks/auth.hooks";
-import { useAuth } from "../context/useAuth";
 import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -19,8 +18,6 @@ export default function Register() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
- // const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
