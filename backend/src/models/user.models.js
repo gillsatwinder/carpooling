@@ -46,7 +46,7 @@ const User = sequelize.define('User', {
   },
   PhoneNumber: {
     type: DataTypes.STRING,
-    allowNUll:true
+    allowNull:true
   },
   ProfilePicture: {
     type: DataTypes.TEXT,
@@ -56,6 +56,11 @@ const User = sequelize.define('User', {
     type: DataTypes.ENUM('DRIVER', 'PASSENGER', 'BOTH'),
     defaultValue:"PASSENGER",
   },
+  is_verified: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  }
   
 }, {
   timestamps: false,

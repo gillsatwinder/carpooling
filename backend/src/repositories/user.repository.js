@@ -141,6 +141,21 @@ const findAllDriversExceptUser = async (userId) => {
 
 };
 
+const markVerified = async (id) => {
+  const [updatedRows, updatedUsers] = await User.update(
+    { is_verified: true },
+    {
+      where: { id },
+      returning: true,
+    }
+  );
+  if (updatedRows === 0) {
+    return null;
+  }
+  return updatedUsers[0];
+};
+
+
 module.exports = {
   findByEmail,
   findById,
@@ -151,4 +166,5 @@ module.exports = {
   updateProfilePicture,
   findAllDrivers,
   findAllDriversExceptUser,
+  markVerified,
 };
