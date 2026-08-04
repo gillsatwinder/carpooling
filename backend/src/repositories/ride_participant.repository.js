@@ -17,6 +17,7 @@ exports.findAllByPost = async (postId) => {
   return await RideParticipant.findAll({
     where: {
       post_id: postId,
+      status: ["PENDING", "ACCEPTED"]
     },
     include: [
       {

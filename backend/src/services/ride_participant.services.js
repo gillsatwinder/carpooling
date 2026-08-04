@@ -1,5 +1,6 @@
 const postRepository = require("../repositories/post.repository");
 const participantRepository = require("../repositories/ride_participant.repository");
+const notificationHelper = require("../utils/notification.helper")
 
 exports.joinRide = async (postId, userId, role) => {
   // Find the post
@@ -37,12 +38,23 @@ exports.joinRide = async (postId, userId, role) => {
 
 
 
-  return await participantRepository.create({
+  const participant = await participantRepository.create({
     post_id: postId,
     user_id: userId,
     role: role,
     status: "PENDING",
   });
+
+  //notify
+  await notificationHelper.notifyRideOwner(
+    post.owner_id,
+    participant.id,
+    post.id,
+    role
+  );
+
+
+  return participant;
 };
 
 exports.getParticipants = async (postId) => {
@@ -56,7 +68,7 @@ exports.getParticipants = async (postId) => {
   return await participantRepository.findAllByPost(postId);
 };
 
-exports.acceptParticipant = async(  participantId, ownerId )=>{
+exports.acceptParticipant = async (participantId, ownerId) => {
 
   const participant =
     await participantRepository.findById(
@@ -64,7 +76,7 @@ exports.acceptParticipant = async(  participantId, ownerId )=>{
     );
 
 
-  if(!participant)
+  if (!participant)
     throw new Error("Participant not found");
 
 
@@ -74,7 +86,7 @@ exports.acceptParticipant = async(  participantId, ownerId )=>{
     );
 
 
-  if(post.owner_id !== ownerId)
+  if (post.owner_id !== ownerId)
     throw new Error("Unauthorized");
 
 
@@ -84,115 +96,133 @@ exports.acceptParticipant = async(  participantId, ownerId )=>{
     );
 
 
-  if(acceptedCount >= post.seats)
+  if (acceptedCount >= post.seats)
     throw new Error("No seats available");
 
 
-  return await participantRepository.updateStatus(
+  const updatedParticipant = await participantRepository.updateStatus(
     participantId,
     "ACCEPTED"
   );
+ // Notify the person who joined
+  await notificationHelper.notifyParticipantAccepted(
+    participant.user_id,
+    post.id,
+    participant.id
+  );
 
+  return updatedParticipant;
+
+  
 };
 
 
 // REJECT
-exports.rejectParticipant = async( participantId, ownerId )=>{
+exports.rejectParticipant = async (participantId, ownerId) => {
 
- const participant =
- await participantRepository.findById(
-    participantId
- );
+  const participant =
+    await participantRepository.findById(
+      participantId
+    );
 
 
- if(!participant)
+  if (!participant)
     throw new Error("Participant not found");
 
 
- const post =
- await postRepository.findById(
-    participant.post_id
- );
+  const post =
+    await postRepository.findById(
+      participant.post_id
+    );
 
 
- if(post.owner_id !== ownerId)
+  if (post.owner_id !== ownerId)
     throw new Error("Unauthorized");
 
 
- return await participantRepository.updateStatus(
+  const updatedParticipant = await participantRepository.updateStatus(
     participantId,
     "REJECTED"
- );
+  );
+
+  // Notify rejected participant
+  await notificationHelper.notifyParticipantRejected(
+    updatedParticipant.user_id,
+    updatedParticipant.post_id,
+    updatedParticipant.id
+  );
+  return updatedParticipant;
+
 
 };
 
 // MY RIDES
-exports.getMyJoinedRides = async(
- userId
-)=>{
+exports.getMyJoinedRides = async (
+  userId
+) => {
 
- return await participantRepository.findByUserId(
+  return await participantRepository.findByUserId(
     userId
- );
+  );
 
 };
 
 // CANCEL REQUEST
-exports.cancelRequest = async(
- participantId,
- userId
-)=>{
+exports.cancelRequest = async (
+  participantId,
+  userId
+) => {
 
- const participant =
- await participantRepository.findById(
-    participantId
- );
+  const participant =
+    await participantRepository.findById(
+      participantId
+    );
 
 
- if(!participant)
+  if (!participant)
     throw new Error("Participant not found");
 
 
- if(participant.user_id !== userId)
+  if (participant.user_id !== userId)
     throw new Error("Unauthorized");
 
 
- if(participant.status !== "PENDING")
+  if (participant.status !== "PENDING")
     throw new Error(
       "Only pending requests can be cancelled"
     );
 
 
-return await participantRepository.delete(
+  return await participantRepository.delete(
     participantId
- );
+  );
 
 };
 
 
 
 // LEAVE RIDE
-exports.leaveRide = async(
- participantId,
- userId
-)=>{
+exports.leaveRide = async (
+  participantId,
+  userId
+) => {
 
- const participant =
- await participantRepository.findById(
-    participantId
- );
+  const participant =
+    await participantRepository.findById(
+      participantId
+    );
 
 
- if(!participant)
+  if (!participant)
     throw new Error("Participant not found");
 
 
- if(participant.user_id !== userId)
+  if (participant.user_id !== userId)
     throw new Error("Unauthorized");
 
 
- return await participantRepository.delete(
+  return await participantRepository.delete(
     participantId
- );
+  );
 
 };
