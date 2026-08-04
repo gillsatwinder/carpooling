@@ -1,5 +1,5 @@
 const postRepository = require("../repositories/post.repository");
-const notificationHelper =require("../utils/notification.helper")
+const notificationHelper = require("../utils/notification.helper")
 
 exports.createPost = async (userId, data) => {
   const post = await postRepository.create({
@@ -8,11 +8,11 @@ exports.createPost = async (userId, data) => {
     status: "OPEN",
   });
   // Only notify drivers for ride requests
-    if (post.type === "RIDE_REQUEST") {
+  if (post.type === "RIDE_REQUEST") {
 
-        await notificationHelper.notifyDriversAboutRideRequest(post); 
+    await notificationHelper.notifyDriversAboutRideRequest(post);
 
-    }
+  }
 
 
   return post;
@@ -69,4 +69,42 @@ exports.deletePost = async (id, userId) => {
     throw error;
   }
   return await postRepository.delete(id);
+};
+
+
+exports.searchPosts = async ({
+  lat,
+  lng,
+  radius,
+  date,
+  type
+}) => {
+
+  const posts = await postRepository.searchNearbyPosts({
+    lat,
+    lng,
+    radius,
+    date
+  });
+
+  const nearbyPosts = posts.filter(
+    (post) => Number(post.get("distance")) <= radius
+  );
+
+  let filteredPosts = nearbyPosts;
+
+  if (type && type !== "ALL") {
+    filteredPosts = filteredPosts.filter(
+      post => post.type === type
+    );
+  }
+
+  return {
+    offers: filteredPosts.filter(
+      p => p.type === "RIDE_OFFER"
+    ),
+    requests: filteredPosts.filter(
+      p => p.type === "RIDE_REQUEST"
+    )
+  };
 };

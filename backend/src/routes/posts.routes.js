@@ -13,6 +13,8 @@ router.get("/", postController.getAllPosts);
 
 // Get my posts
 router.get("/me", authenticateToken, postController.getMyPosts);
+// Search posts with query parameters
+router.get("/search", authenticateToken, postController.searchPosts);
 
 // Get single post
 router.get("/:id", postController.getPostById);
@@ -34,5 +36,7 @@ router.delete("/:id", authenticateToken, postController.deletePost);
 
 // Get participants for a ride
 router.get("/:postId/participants", authenticateToken, rideParticipantController.getParticipants);
+
+
 
 module.exports = router;
