@@ -52,8 +52,9 @@ export default function VerifyOtp() {
       // account becomes usable — verify-otp is what returns the JWT now,
       // not register.
       const token = res?.data?.token;
+      const user = res?.data?.user;
       if (token) {
-        login(token);
+        login(token,false,user);
       }
 
       navigate("/onboarding");

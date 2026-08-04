@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { searchNearbyPosts } from "../hooks/user.hooks";
 import { getMyJoinedRides } from "../hooks/rideParticipant.hooks";
 import CreateRide from "../components/CreateRide"
@@ -76,6 +77,21 @@ const Dashboard = () => {
           {error}
         </div>
       )}
+      {/* NEW: moved here — sits at the true top-left corner of the content area */}
+    <div className="max-w-6xl mx-auto px-6 flex gap-4 mb-2">
+      <Link
+        to="/ride-management"
+        className="text-sm text-gray-500 hover:text-purple-600 transition"
+      >
+        My Rides
+      </Link>
+      <Link
+        to="/my-requested-rides"
+        className="text-sm text-gray-500 hover:text-purple-600 transition"
+      >
+        Joined Rides
+      </Link>
+    </div>
       <button
         onClick={() => setShowCreateRide(true)}
         className="
@@ -105,7 +121,7 @@ const Dashboard = () => {
       </button>
       {/* Hero Search */}
       <section className="max-w-6xl mx-auto px-6 pt-16">
-
+             
         <h1 className="text-5xl font-bold text-center text-[#16213E] mb-10">
           Where are you heading?
         </h1>

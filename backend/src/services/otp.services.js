@@ -71,6 +71,7 @@ const verifyOtp = async (userId, inputOtp) => {
       id: user.id,
       name: user.name,
       email: user.email,
+      ProfilePicture: user.ProfilePicture
     },
   };
 };

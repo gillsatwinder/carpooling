@@ -27,9 +27,10 @@ export default function Login() {
 
       const token = res?.data?.token;
       const onboarded = res?.data?.onboarded;
+      const user = res?.data?.user;
 
       if (token) {
-        login(token, onboarded);
+        login(token, onboarded,user);
       }
 
       if (!onboarded) {
