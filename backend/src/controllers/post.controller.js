@@ -92,3 +92,37 @@ exports.deletePost = async (req, res) => {
     });
   }
 };
+
+exports.searchPosts = async (req, res) => {
+  try {
+    const {
+      lat,
+      lng,
+      radius,
+      date,
+      type
+    } = req.query;
+
+    if (!lat || !lng) {
+      return res.status(400).json({
+        error: "Latitude and longitude are required."
+      });
+    }
+
+    const results = await postService.searchPosts({
+      lat: Number(lat),
+      lng: Number(lng),
+      radius: Number(radius) || 5,
+      date,
+      type
+    });
+
+    return res.status(200).json(results);
+
+  } catch (err) {
+    return res.status(err.statusCode || 500).json({
+      success: false,
+      message: err.message || "Internal Server Error",
+    });
+  }
+};

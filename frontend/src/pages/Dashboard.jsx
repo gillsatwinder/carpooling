@@ -1,71 +1,113 @@
 import { useEffect, useState } from "react";
-import { getAllRideOffers } from "../hooks/user.hooks";
+import { searchNearbyPosts } from "../hooks/user.hooks";
 import { getMyJoinedRides } from "../hooks/rideParticipant.hooks";
 import CreateRide from "../components/CreateRide"
 import DashboardSection from "../components/DashboardSection";
-import { Plus} from "lucide-react";
+import { Plus } from "lucide-react";
+import LocationAutocomplete from "../components/LocationAutoComplete";
 const Dashboard = () => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [pickup, setPickup] = useState(null);
+  const [pickupInput, setPickupInput] = useState("");
+  const [hasSearched, setHasSearched] = useState(false);
+  const [rideOffers, setRideOffers] = useState([]);
+  const [rideRequests, setRideRequests] = useState([]);
+
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [joinedRideIds, setJoinedRideIds] = useState([]);
   const [showCreateRide, setShowCreateRide] = useState(false);
   useEffect(() => {
-    async function fetchData() {
+    async function loadJoinedRides() {
       try {
+        const joined = await getMyJoinedRides();
 
-        const [postsData, joinedData] = await Promise.all([
-          getAllRideOffers(),
-          getMyJoinedRides()
-        ]);
-
-        setPosts(postsData);
-
-        const joinedIds = joinedData.map(
-          (ride) => ride.post_id
+        setJoinedRideIds(
+          joined.map(ride => ride.post_id)
         );
-
-        setJoinedRideIds(joinedIds);
-
       } catch (err) {
         console.error(err);
-        setError(err?.message || "Failed to fetch data");
-
-      } finally {
-        setLoading(false);
       }
     }
 
-    fetchData();
+    loadJoinedRides();
   }, []);
 
-  const handleRideCreated = (newRide) => {
-    if (newRide.type === "RIDE_OFFER") {
-      setPosts((prev) => [
-        newRide,
-        ...prev
-      ]);
-    }
+  const handleRideCreated = async () => {
     setShowCreateRide(false);
+
+    try {
+      if (pickup) {
+        await handleSearch();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const handleSearch = async () => {
+    if (!pickup) return;
+
+    setError(null);
+    try {
+      setLoading(true);
+
+      const data = await searchNearbyPosts({
+        lat: pickup.lat,
+        lng: pickup.lon
+      });
+      setRideOffers(data.offers);
+      setRideRequests(data.requests);
+
+      setHasSearched(true);
+
+    } catch (err) {
+      setError(err?.error || err?.message || "Failed to search nearby rides.");
+
+    } finally {
+      setLoading(false);
+    }
+
   };
 
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        Loading...
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="text-red-500 text-center mt-10">
-        {error}
-      </div>
-    );
-
   return (
     <div className="min-h-screen bg-gray-100 p-8">
+      {error && (
+        <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-red-600">
+          {error}
+        </div>
+      )}
+      <div className="bg-white rounded-xl p-6 shadow mb-8">
+
+        <h2 className="text-xl font-semibold mb-4">
+          Find nearby rides
+        </h2>
+
+        <LocationAutocomplete
+          name="pickup"
+          value={pickupInput}
+          placeholder="Enter your pickup location"
+          onChange={(e) => {
+            setPickupInput(e.target.value);
+            setPickup(null);
+            setHasSearched(false);
+            setRideOffers([]);
+            setRideRequests([]);
+            setError(null);// invalidate previous selection if user edits text
+          }}
+          onSelect={(location) => {
+            setPickup(location);
+            setPickupInput(location.formatted);
+          }}
+        />
+
+        <button
+          onClick={handleSearch}
+          disabled={!pickup || loading}
+          className="mt-4 bg-[#16213E] text-white px-5 py-3 rounded-lg disabled:opacity-50"
+        >
+          {loading ? "Searching..." : "Search Nearby Rides"}
+        </button>
+      </div>
 
       <div className="flex justify-between items-center mb-8">
 
@@ -91,11 +133,25 @@ const Dashboard = () => {
       </div>
 
 
-      <DashboardSection
-        title="Ride Offers"
-        posts={posts}
-        joinedRideIds={joinedRideIds}
-      />
+      {!hasSearched ? (
+        <div className="text-center py-10 text-gray-500">
+          Search for a pickup location to find nearby rides.
+        </div>
+      ) : (
+        <>
+          <DashboardSection
+            title="Nearby Ride Offers"
+            posts={rideOffers}
+            joinedRideIds={joinedRideIds}
+          />
+
+          <DashboardSection
+            title="Nearby Ride Requests"
+            posts={rideRequests}
+            joinedRideIds={joinedRideIds}
+          />
+        </>
+      )}
 
       {/* Create Ride Modal */}
       {showCreateRide && (

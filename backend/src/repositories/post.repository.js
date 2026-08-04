@@ -1,4 +1,5 @@
 const { Post, User } = require("../models");
+const { Op, literal } = require("sequelize");
 
 // Create post
 exports.create = async (data) => {
@@ -54,4 +55,39 @@ exports.update = async (id, data) => {
 
 exports.delete = async (id) => {
   return await Post.destroy({ where: { id } });
-}; 
+};
+
+exports.searchNearbyPosts = async ({ lat, lng, date }) => {
+  const distanceFormula = literal(`
+    (
+      6371 *
+      acos(
+        cos(radians(${lat}))
+        *
+        cos(radians("pickup_lat"))
+        *
+        cos(radians("pickup_lng") - radians(${lng}))
+        +
+        sin(radians(${lat}))
+        *
+        sin(radians("pickup_lat"))
+      )
+    )
+  `);
+
+  const where = {
+    status: "OPEN",
+  };
+
+  if (date) {
+    where.ride_date = date;
+  }
+
+  return await Post.findAll({
+    attributes: {
+      include: [[distanceFormula, "distance"]],
+    },
+    where,
+    order: [[literal("distance"), "ASC"]],
+  });
+};

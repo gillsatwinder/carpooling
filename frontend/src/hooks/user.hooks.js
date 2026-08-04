@@ -79,3 +79,17 @@ export const uploadProfilePicture = async (file) => {
     body: formData,
   });
 };
+
+
+export async function searchNearbyPosts({ lat, lng, radius=5, date ,type}) {
+  const params = new URLSearchParams({
+    lat,
+    lng,
+    radius,
+  });
+
+  if (date) params.append("date", date);
+  if (type) params.append("type", type);
+
+  return await fetchClient(`/posts/search?${params.toString()}`);
+}
