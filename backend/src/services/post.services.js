@@ -1,5 +1,6 @@
 const postRepository = require("../repositories/post.repository");
 const notificationHelper = require("../utils/notification.helper")
+const participantRepository= require("../repositories/ride_participant.repository")
 
 exports.createPost = async (userId, data) => {
   const post = await postRepository.create({
@@ -47,7 +48,17 @@ exports.cancelPost = async (id, userId) => {
   if (!post) throw new Error("Post not found");
   if (post.owner_id !== userId) throw new Error("Unauthorized");
 
-  return await postRepository.update(id, { status: "CANCELLED" });
+  const updatedPost = await postRepository.update(id, { status: "CANCELLED" });
+  const participants =
+    await participantRepository.findAllByPost(id);
+
+
+  await notificationHelper.notifyRideStatusChanged(
+    participants,
+    id,
+    "CANCELLED"
+);
+  return updatedPost;
 };
 
 exports.closePost = async (id, userId) => {
@@ -56,7 +67,16 @@ exports.closePost = async (id, userId) => {
   if (!post) throw new Error("Post not found");
   if (post.owner_id !== userId) throw new Error("Unauthorized");
 
-  return await postRepository.update(id, { status: "CLOSED" });
+  const updatedPost = await postRepository.update(id, { status: "CLOSED" });
+  const participants =
+  await participantRepository.findAllByPost(id);
+
+  await notificationHelper.notifyRideStatusChanged(
+    participants,
+    id,
+    "CLOSED"
+  );
+  return updatedPost;
 };
 exports.deletePost = async (id, userId) => {
   const post = await postRepository.findById(id);

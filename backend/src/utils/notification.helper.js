@@ -45,35 +45,143 @@ const notifyDriversAboutRideRequest = async (ride) => {
 
 
 
-// Notify driver when passenger joins
-const notifyPassengerJoined = async (
-    driverId,
-    passengerId,
-    rideId
+/// Notify ride owner when someone joins their ride
+const notifyRideOwner = async (
+    ownerId,
+    participantId,
+    rideId,
+    role
 ) => {
 
     return await notificationService.createNotification({
 
-        user_id: driverId,
+        user_id: ownerId,
 
-        type: NotificationType.PASSENGER_JOINED,
+        type: role === "PASSENGER"
+            ? NotificationType.PASSENGER_JOINED
+            : NotificationType.DRIVER_JOINED,
 
         reference_type: "RIDE_PARTICIPANT",
 
-        reference_id: rideId,
+        reference_id: participantId,
 
-        title: "New Passenger Request",
+        title:
+            role === "PASSENGER"
+                ? "New Passenger Request"
+                : "New Driver Request",
 
         message:
-            "A passenger wants to join your ride"
+            role === "PASSENGER"
+                ? "A passenger wants to join your ride"
+                : "A driver wants to join your ride"
 
     });
 
 };
 
+const notifyParticipantAccepted = async (
+    participantUserId,
+    rideId,
+    participantId
+) => {
+
+    return await notificationService.createNotification({
+
+        user_id: participantUserId,
+
+        type: NotificationType.PASSENGER_ACCEPTED,
+
+        reference_type: "RIDE_PARTICIPANT",
+
+        reference_id: participantId,
+
+        title: "Ride Request Accepted",
+
+        message:
+            "Your request to join the ride has been accepted."
+
+    });
+
+};
+
+const notifyParticipantRejected = async (
+    participantUserId,
+    rideId,
+    participantId
+) => {
+
+    return await notificationService.createNotification({
+
+        user_id: participantUserId,
+
+        type: NotificationType.PASSENGER_REJECTED,
+
+        reference_type: "RIDE_PARTICIPANT",
+
+        reference_id: participantId,
+
+        title: "Ride Request Rejected",
+
+        message:
+            "Your request to join the ride has been rejected."
+
+    });
+
+};
+
+const notifyRideStatusChanged = async (
+    participants,
+    rideId,
+    status
+) => {
+
+    const title =
+        status === "CANCELLED"
+            ? "Ride Cancelled"
+            : "Ride Closed";
+
+
+    const message =
+        status === "CANCELLED"
+            ? "The ride you joined has been cancelled by the owner."
+            : "The ride you joined has been closed by the owner.";
+
+
+    const notifications = participants.map(participant => ({
+        
+        user_id: participant.user_id,
+
+        type:
+            status === "CANCELLED"
+                ? NotificationType.RIDE_CANCELLED
+                : NotificationType.RIDE_CLOSED,
+
+        reference_type: "POST",
+
+        reference_id: rideId,
+
+        title,
+
+        message
+
+    }));
+
+
+    await Promise.all(
+        notifications.map(notification =>
+            notificationService.createNotification(notification)
+        )
+    );
+
+
+    return notifications.length;
+};
 
 
 module.exports = {
     notifyDriversAboutRideRequest,
-    notifyPassengerJoined
+    notifyRideOwner,
+    notifyParticipantAccepted,
+    notifyParticipantRejected,
+    notifyRideStatusChanged
 };

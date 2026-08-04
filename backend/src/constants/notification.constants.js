@@ -5,6 +5,7 @@ module.exports = {
 
     PASSENGER_JOINED:
         "PASSENGER_JOINED",
+    DRIVER_JOINED: "DRIVER_JOINED",
 
     PASSENGER_ACCEPTED:
         "PASSENGER_ACCEPTED",
@@ -12,7 +13,8 @@ module.exports = {
     PASSENGER_REJECTED:
         "PASSENGER_REJECTED",
 
-    RIDE_CANCELLED:
-        "RIDE_CANCELLED"
+    
+    RIDE_CANCELLED: "RIDE_CANCELLED",
+    RIDE_CLOSED: "RIDE_CLOSED"
 
 };
