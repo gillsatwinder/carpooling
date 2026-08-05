@@ -74,25 +74,23 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
   };
 
   const prevStep = () => {
-    if (step === 5 && !isOffer) {
-      setStep(3);
-    } else {
+    
       setStep((prev) => prev - 1);
-    }
+    
   };
   const totalSteps = isOffer ? 5 : 4;
 
-const isPickupValid =
+  const isPickupValid =
     form.pickup_location &&
     form.pickup_lat &&
     form.pickup_lng;
 
 
-const isDestinationValid =
+  const isDestinationValid =
     form.destination &&
     form.destination_lat &&
     form.destination_lng;
-    
+
   const canContinue = () => {
     switch (step) {
       case 1:
@@ -101,7 +99,7 @@ const isDestinationValid =
       case 2:
         return (
           isPickupValid &&
-        isDestinationValid
+          isDestinationValid
         );
 
       case 3:
@@ -109,7 +107,7 @@ const isDestinationValid =
 
       case 4:
         if (!isOffer) {
-          return !form.seats || Number(form.seats) > 0;
+          return true;
         }
 
         return (
@@ -154,7 +152,7 @@ const isDestinationValid =
         ride_datetime: form.ride_datetime
           ? new Date(form.ride_datetime).toISOString()
           : null,
-        seats: Number(form.seats) || 1,
+        seats: isOffer ? Number(form.seats) : 1,
         price: isOffer && form.price !== "" ? Number(form.price) : null,
       };
 
@@ -369,7 +367,7 @@ const isDestinationValid =
 
           </div>
         )}
-        {step === 4 && (
+        {isOffer && step === 4 && (
 
           <div className="space-y-6">
 
@@ -387,29 +385,27 @@ const isDestinationValid =
 
             <div>
 
-              <label className="block mb-2 font-medium">
-                {isOffer ? "Available Seats" : "Seats Needed"}
-              </label>
+              
+                <div>
+                  <label className="block mb-2 font-medium">
+                    Available Seats
+                  </label>
 
-              <input
-                type="number"
-                min={1}
-                name="seats"
-                value={form.seats}
-                onChange={handleChange}
-                placeholder={isOffer ? "Number of available seats" : "Number of seats needed"}
-                className="w-full rounded-lg border border-slate-200 px-4 py-3"
-              />
-
-              {!isOffer && (
-                <p className="text-xs text-slate-500 mt-2">
-                  Optional. If you don't specify, we'll assume 1 seat.
-                </p>
-              )}
+                  <input
+                    type="number"
+                    min={1}
+                    name="seats"
+                    value={form.seats}
+                    onChange={handleChange}
+                    placeholder="Number of available seats"
+                    className="w-full rounded-lg border border-slate-200 px-4 py-3"
+                  />
+                </div>
+              
 
             </div>
 
-            {isOffer && (
+            
               <div>
 
                 <label className="block mb-2 font-medium">
@@ -427,7 +423,7 @@ const isDestinationValid =
                 />
 
               </div>
-            )}
+            
 
           </div>
 
@@ -479,12 +475,11 @@ const isDestinationValid =
 
               </p>
 
-              <p>
-                <strong>
-                  {isOffer ? "Available Seats: " : "Seats Needed: "}
-                </strong>
-                {Number(form.seats) || 1}
-              </p>
+              {isOffer && (
+                <p>
+                  <strong>Available Seats:</strong> {form.seats}
+                </p>
+              )}
 
               {isOffer && (
                 <p>
