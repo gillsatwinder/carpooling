@@ -176,6 +176,23 @@ const PostCard = ({ post, isJoined }) => {
           {post.seats ?? 1}
         </div>
 
+
+        {post.type === "RIDE_REQUEST" && (
+          <div className="flex items-center gap-2">
+            <strong>Carpooling:</strong>
+
+            <span
+              className={`text-xs px-3 py-1 rounded-full font-medium ${post.allow_carpool
+                  ? "bg-green-100 text-green-700"
+                  : "bg-gray-100 text-gray-600"
+                }`}
+            >
+              {post.allow_carpool ? "Allowed" : "Not Allowed"}
+            </span>
+          </div>
+        )}
+
+
         {post.type === "RIDE_OFFER" && (
           <div>
             <strong>Price:</strong>{" "}

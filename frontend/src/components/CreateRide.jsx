@@ -19,6 +19,7 @@ const emptyForm = {
   ride_datetime: "",
   seats: 1,
   price: "",
+  allow_carpool: false,
 };
 
 // <input type="datetime-local"> only accepts "YYYY-MM-DDTHH:mm" (local time,
@@ -47,6 +48,7 @@ const toFormState = (ride) => ({
   ride_datetime: toDatetimeLocalValue(ride?.ride_datetime),
   seats: ride?.seats ?? 1,
   price: ride?.price ?? "",
+  allow_carpool: ride?.allow_carpool ?? false,
 });
 
 /**
@@ -74,9 +76,9 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
   };
 
   const prevStep = () => {
-    
-      setStep((prev) => prev - 1);
-    
+
+    setStep((prev) => prev - 1);
+
   };
   const totalSteps = isOffer ? 5 : 4;
 
@@ -154,7 +156,12 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
           : null,
         seats: isOffer ? Number(form.seats) : 1,
         price: isOffer && form.price !== "" ? Number(form.price) : null,
+
+        // only requests can allow carpool
+        allow_carpool: !isOffer && form.allow_carpool,
       };
+
+      console.log(payload);
 
       const result = isEdit
         ? await updatePost(ride.id ?? ride._id, payload)
@@ -364,6 +371,55 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
               />
 
             </div>
+            {!isOffer && (
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-[#16213E]">
+                  Allow Carpooling?
+                </h3>
+
+                <p className="text-sm text-slate-500 mb-4">
+                  If enabled, drivers can convert your request into a shared ride
+                  and offer additional seats to other passengers.
+                </p>
+
+                <div className="flex gap-4">
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm(prev => ({
+                        ...prev,
+                        allow_carpool: true
+                      }))
+                    }
+                    className={`px-5 py-3 rounded-xl border ${form.allow_carpool
+                        ? "bg-[#16213E] text-white"
+                        : "border-slate-300"
+                      }`}
+                  >
+                    Yes, allow carpool
+                  </button>
+
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm(prev => ({
+                        ...prev,
+                        allow_carpool: false
+                      }))
+                    }
+                    className={`px-5 py-3 rounded-xl border ${!form.allow_carpool
+                        ? "bg-[#16213E] text-white"
+                        : "border-slate-300"
+                      }`}
+                  >
+                    No, just me
+                  </button>
+
+                </div>
+              </div>
+            )}
 
           </div>
         )}
@@ -385,45 +441,45 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
 
             <div>
 
-              
-                <div>
-                  <label className="block mb-2 font-medium">
-                    Available Seats
-                  </label>
 
-                  <input
-                    type="number"
-                    min={1}
-                    name="seats"
-                    value={form.seats}
-                    onChange={handleChange}
-                    placeholder="Number of available seats"
-                    className="w-full rounded-lg border border-slate-200 px-4 py-3"
-                  />
-                </div>
-              
-
-            </div>
-
-            
               <div>
-
                 <label className="block mb-2 font-medium">
-                  Price per rider
+                  Available Seats
                 </label>
 
                 <input
                   type="number"
-                  min={0}
-                  name="price"
-                  value={form.price}
+                  min={1}
+                  name="seats"
+                  value={form.seats}
                   onChange={handleChange}
-                  placeholder="0 for free"
+                  placeholder="Number of available seats"
                   className="w-full rounded-lg border border-slate-200 px-4 py-3"
                 />
-
               </div>
-            
+
+
+            </div>
+
+
+            <div>
+
+              <label className="block mb-2 font-medium">
+                Price per rider
+              </label>
+
+              <input
+                type="number"
+                min={0}
+                name="price"
+                value={form.price}
+                onChange={handleChange}
+                placeholder="0 for free"
+                className="w-full rounded-lg border border-slate-200 px-4 py-3"
+              />
+
+            </div>
+
 
           </div>
 
@@ -474,6 +530,13 @@ const CreateRide = ({ mode = "create", ride = null, onSuccess, onClose }) => {
                   : "-"}
 
               </p>
+
+              {!isOffer && (
+                <p>
+                  <strong>Allow Carpooling: </strong>
+                  {form.allow_carpool ? "Yes" : "No"}
+                </p>
+              ) }
 
               {isOffer && (
                 <p>

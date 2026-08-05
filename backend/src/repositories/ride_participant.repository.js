@@ -98,3 +98,14 @@ exports.delete = async (id) => {
     },
   });
 };
+
+
+exports.findAcceptedDriver = async (postId) => {
+  return await RideParticipant.findOne({
+    where: {
+      post_id: postId,
+      role: "DRIVER",
+      status: "ACCEPTED",
+    },
+  });
+};

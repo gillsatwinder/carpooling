@@ -79,6 +79,16 @@ const Post = sequelize.define(
       allowNull: true,
     },
 
+    allow_carpool: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+
+    converted_offer_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+
     status: {
       type: DataTypes.ENUM("OPEN", "CLOSED", "CANCELLED"),
       defaultValue: "OPEN",
