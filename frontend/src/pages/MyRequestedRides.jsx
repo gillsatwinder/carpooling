@@ -5,6 +5,8 @@ import {
   leaveRide,
 } from "../hooks/rideParticipant.hooks";
 
+import { convertToRideOffer } from "../hooks/user.hooks";
+
 import {
   MapPin,
   Navigation2,
@@ -42,9 +44,13 @@ const RequestedRideCard = ({
   rideRequest,
   onCancel,
   onLeave,
+  onConvert,
 }) => {
 
   const [loading, setLoading] = useState(false);
+  const [showConvertForm, setShowConvertForm] = useState(false);
+  const [seats, setSeats] = useState(1);
+  const [price, setPrice] = useState("");
 
   const ride = rideRequest.post;
 
@@ -98,8 +104,8 @@ const RequestedRideCard = ({
 
           <span
             className={`text-xs px-2 py-1 rounded-full font-small ${ride.type === "RIDE_OFFER"
-                ? "bg-purple-100 text-purple-700"
-                : "bg-blue-100 text-blue-700"
+              ? "bg-purple-100 text-purple-700"
+              : "bg-blue-100 text-blue-700"
               }`}
           >
             {ride.type === "RIDE_OFFER" ? "Ride Offer" : "Ride Request"}
@@ -152,6 +158,26 @@ const RequestedRideCard = ({
 
 
       {/* Actions */}
+      {
+        ride.type === "RIDE_REQUEST" &&
+        ride.allow_carpool &&
+        rideRequest.role === "DRIVER" &&
+        rideRequest.status === "ACCEPTED" && (
+
+          <button
+            onClick={() => setShowConvertForm(true)}
+            className="
+            mt-5 w-full
+            bg-purple-600 text-white
+            rounded-lg py-2
+            hover:bg-purple-700
+            "
+          >
+            Convert to Ride Offer
+          </button>
+
+        )
+      }
 
       {
         rideRequest.status === "PENDING" && (
@@ -200,6 +226,77 @@ const RequestedRideCard = ({
           Leave Ride
         </button>
       )}
+
+      {
+        showConvertForm && (
+
+          <div className="mt-4 p-4 border rounded-lg bg-slate-50">
+
+            <h3 className="font-semibold mb-3">
+              Create Ride Offer
+            </h3>
+
+
+            <label className="block text-sm mb-1">
+              Available Seats
+            </label>
+
+            <input
+              type="number"
+              min="1"
+              value={seats}
+              onChange={(e) => setSeats(e.target.value)}
+              className="w-full border rounded-lg p-2 mb-3"
+            />
+
+
+            <label className="block text-sm mb-1">
+              Price per rider
+            </label>
+
+            <input
+              type="number"
+              min="0"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="w-full border rounded-lg p-2"
+            />
+
+
+            <div className="flex gap-2 mt-4">
+
+              <button
+                onClick={() => setShowConvertForm(false)}
+                className="flex-1 border rounded-lg py-2"
+              >
+                Cancel
+              </button>
+
+
+              <button
+                onClick={() => {
+                  onConvert(
+                    ride.id,
+                    {
+                      seats: Number(seats),
+                      price: price === "" ? null : Number(price)
+                    }
+                  );
+                }}
+                className="
+                flex-1 bg-purple-600 
+                text-white rounded-lg py-2
+                "
+              >
+                Convert
+              </button>
+
+            </div>
+
+          </div>
+
+        )
+      }
 
 
     </div>
@@ -281,7 +378,22 @@ const MyRequestedRides = () => {
 
 
 
+  const handleConvert = async (postId, data) => {
 
+    try {
+
+      await convertToRideOffer(postId, data);
+
+      alert("Ride converted to offer");
+
+      fetchRides();
+
+    }
+    catch (err) {
+      alert(err.message);
+    }
+
+  };
 
   if (loading) {
 
@@ -304,6 +416,7 @@ const MyRequestedRides = () => {
     );
 
   }
+
 
 
 
@@ -346,6 +459,7 @@ const MyRequestedRides = () => {
                     rideRequest={ride}
                     onCancel={handleCancel}
                     onLeave={handleLeave}
+                    onConvert={handleConvert}
                   />
                 ))
               }

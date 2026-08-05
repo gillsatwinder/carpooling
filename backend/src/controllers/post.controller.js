@@ -125,3 +125,17 @@ exports.searchPosts = async (req, res) => {
     });
   }
 };
+
+exports.convertToOffer = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const {seats, price} = req.body;
+    const postId = req.params.postId;
+
+    const post = await postService.convertToOffer(postId, userId, seats, price);
+
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
