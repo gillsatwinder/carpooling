@@ -69,7 +69,7 @@ const Sidebar = () => {
         >
           Dashboard
         </NavLink>
-
+        {user?.role === "DRIVER" && (
         <NavLink
           to="/ride-requests"
           className={({ isActive }) =>
@@ -82,6 +82,7 @@ const Sidebar = () => {
         >
           Ride Requests
         </NavLink>
+      )}
 
         <NotificationBell />
 

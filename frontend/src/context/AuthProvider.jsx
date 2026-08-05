@@ -40,6 +40,21 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updateUserRole = (role) => {
+  setUser((prevUser) => {
+    if (!prevUser) return prevUser;
+
+    const updatedUser = {
+      ...prevUser,
+      role,
+    };
+
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+
+    return updatedUser;
+  });
+};
+
 
 
   return (
@@ -52,6 +67,7 @@ export function AuthProvider({ children }) {
         login,
         completeOnboarding,
         logout,
+        updateUserRole
       }}
     >
       {children}

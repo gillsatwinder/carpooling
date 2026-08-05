@@ -12,7 +12,7 @@ import Profile from "../pages/Profile";
 import MyRequestedRides from "../pages/MyRequestedRides";
 import RideRequests from "../pages/RideRequests";
 import VerifyOtp from "../pages/VerifyOtp"
-
+import ErrorDialogue from "../components/ErrorDialogue";
 function OnboardingRoute({ children }) {
   const { isAuthenticated, onboarded } = useAuth();
 
@@ -41,6 +41,21 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
+function DriverRoute({ children }) {
+  const { user } = useAuth();
+
+  if (user?.role !== "DRIVER") {
+    return (
+      <ErrorDialogue
+        open
+        title="Drivers Only"
+        message="This page is only available to users registered as drivers."
+      />
+    );
+  }
+
+  return children;
+};
 
 
 
@@ -114,9 +129,11 @@ export default function AppRouter() {
           path="/ride-requests"
           element={
             <ProtectedRoute>
+              <DriverRoute>
               <AppLayout>
                 <RideRequests />
               </AppLayout>
+              </DriverRoute>
             </ProtectedRoute>
           }
         />
