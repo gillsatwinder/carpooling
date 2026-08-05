@@ -113,8 +113,7 @@ exports.searchPosts = async (req, res) => {
       lat: Number(lat),
       lng: Number(lng),
       radius: Number(radius) || 5,
-      date,
-      type
+      date
     });
 
     return res.status(200).json(results);

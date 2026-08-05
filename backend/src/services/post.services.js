@@ -97,7 +97,6 @@ exports.searchPosts = async ({
   lng,
   radius,
   date,
-  type
 }) => {
 
   const posts = await postRepository.searchNearbyPosts({
@@ -110,21 +109,6 @@ exports.searchPosts = async ({
   const nearbyPosts = posts.filter(
     (post) => Number(post.get("distance")) <= radius
   );
+  return nearbyPosts;
 
-  let filteredPosts = nearbyPosts;
-
-  if (type && type !== "ALL") {
-    filteredPosts = filteredPosts.filter(
-      post => post.type === type
-    );
-  }
-
-  return {
-    offers: filteredPosts.filter(
-      p => p.type === "RIDE_OFFER"
-    ),
-    requests: filteredPosts.filter(
-      p => p.type === "RIDE_REQUEST"
-    )
-  };
 };
