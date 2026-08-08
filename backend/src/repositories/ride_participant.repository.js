@@ -79,7 +79,10 @@ exports.findByUserId = async(userId)=>{
   include:[
     {
       model:Post,
-      as:"post"
+      as:"post",
+      where: {
+          status: "OPEN",
+        },
     }
   ],
 
