@@ -37,6 +37,9 @@ router.delete("/:id", authenticateToken, postController.deletePost);
 // Get participants for a ride
 router.get("/:postId/participants", authenticateToken, rideParticipantController.getParticipants);
 
+// Convert ride request to offer
+router.post("/:postId/convert-to-offer", authenticateToken, postController.convertToOffer);
+
 
 
 module.exports = router;

@@ -59,24 +59,28 @@ exports.delete = async (id) => {
 
 exports.searchNearbyPosts = async ({ lat, lng, date }) => {
   const distanceFormula = literal(`
-    (
-      6371 *
-      acos(
+(
+  6371 *
+  acos(
+    LEAST(
+      1,
+      GREATEST(
+        -1,
         cos(radians(${lat}))
-        *
-        cos(radians("pickup_lat"))
-        *
-        cos(radians("pickup_lng") - radians(${lng}))
+        * cos(radians("pickup_lat"))
+        * cos(radians("pickup_lng") - radians(${lng}))
         +
         sin(radians(${lat}))
-        *
-        sin(radians("pickup_lat"))
+        * sin(radians("pickup_lat"))
       )
     )
-  `);
+  )
+)
+`);
 
   const where = {
     status: "OPEN",
+    type: "RIDE_OFFER"
   };
 
   if (date) {

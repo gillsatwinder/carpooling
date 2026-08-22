@@ -113,8 +113,7 @@ exports.searchPosts = async (req, res) => {
       lat: Number(lat),
       lng: Number(lng),
       radius: Number(radius) || 5,
-      date,
-      type
+      date
     });
 
     return res.status(200).json(results);
@@ -124,5 +123,19 @@ exports.searchPosts = async (req, res) => {
       success: false,
       message: err.message || "Internal Server Error",
     });
+  }
+};
+
+exports.convertToOffer = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const {seats, price} = req.body;
+    const postId = req.params.postId;
+
+    const post = await postService.convertToOffer(postId, userId, seats, price);
+
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };

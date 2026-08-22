@@ -11,7 +11,7 @@ const Dashboard = () => {
   const [pickupInput, setPickupInput] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
   const [rideOffers, setRideOffers] = useState([]);
-  const [rideRequests, setRideRequests] = useState([]);
+
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -55,8 +55,7 @@ const Dashboard = () => {
         lat: pickup.lat,
         lng: pickup.lon
       });
-      setRideOffers(data.offers);
-      setRideRequests(data.requests);
+      setRideOffers(data);
 
       setHasSearched(true);
 
@@ -138,7 +137,6 @@ const Dashboard = () => {
                 setPickup(null);
                 setHasSearched(false);
                 setRideOffers([]);
-                setRideRequests([]);
                 setError(null);
               }}
               onSelect={(location) => {
@@ -187,12 +185,6 @@ const Dashboard = () => {
             <DashboardSection
               title="Nearby Ride Offers"
               posts={rideOffers}
-              joinedRideIds={joinedRideIds}
-            />
-
-            <DashboardSection
-              title="Nearby Ride Requests"
-              posts={rideRequests}
               joinedRideIds={joinedRideIds}
             />
           </>

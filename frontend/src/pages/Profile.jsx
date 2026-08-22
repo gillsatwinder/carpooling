@@ -6,6 +6,7 @@ import ProfileImage from "../components/profile/ProfileImage";
 import Modal from "../components/Modal";
 import { getProfile, updateProfile } from "../hooks/user.hooks";
 import { profileSchema } from "../components/utils/profileSchema";
+import { useAuth } from "../context/useAuth";
 
 const initialProfile = {
   name: "",
@@ -31,6 +32,7 @@ const Profile = () => {
 
   const [profile, setProfile] = useState(initialProfile);
   const [draft, setDraft] = useState(initialProfile);
+  const { updateUserRole } = useAuth();
 
   useEffect(() => {
     async function fetchProfile() {
@@ -150,7 +152,7 @@ async function actuallySave() {
       const data = updated.data;
       setProfile(data);
       setDraft(data);
-
+      updateUserRole(data.role);
       setIsEditing(false);
       setSuccessMsg("Profile updated successfully.");
     } catch (err) {

@@ -93,3 +93,10 @@ export async function searchNearbyPosts({ lat, lng, radius=5, date ,type}) {
 
   return await fetchClient(`/posts/search?${params.toString()}`);
 }
+
+export async function convertToRideOffer(postId, data) {
+  return await fetchClient(`/posts/${postId}/convert-to-offer`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}

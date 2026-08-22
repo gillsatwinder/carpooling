@@ -9,6 +9,14 @@ exports.joinRide = async (postId, userId, role) => {
   if (!post) {
     throw new Error("Post not found");
   }
+  // Only open rides can be joined
+  if (post.status !== "OPEN") {
+    throw new Error("This ride is no longer open");
+  }
+  // Owner cannot join their own post
+  if (post.owner_id === userId) {
+    throw new Error("You cannot join your own ride");
+  }
   // If the post is a ride request, the user must join as a passenger or driver
   if (post.type === "RIDE_OFFER") {
     if (role == "DRIVER") {
@@ -16,15 +24,26 @@ exports.joinRide = async (postId, userId, role) => {
     }
   }
 
-  // Only open rides can be joined
-  if (post.status !== "OPEN") {
-    throw new Error("This ride is no longer open");
+
+
+  // RIDE_REQUEST -> only drivers can join
+  if (post.type === "RIDE_REQUEST") {
+    if (role !== "DRIVER") {
+      throw new Error("You can only join ride requests as a driver");
+    }
+
+    // Check if this request already has an accepted driver
+    const acceptedDriver = await participantRepository.findAcceptedDriver(
+      postId
+    );
+
+    if (acceptedDriver) {
+      throw new Error("This ride request already has a driver");
+    }
   }
 
-  // Owner cannot join their own post
-  if (post.owner_id === userId) {
-    throw new Error("You cannot join your own ride");
-  }
+
+
 
   // Check duplicate participation
   const existing = await participantRepository.findByPostAndUser(
@@ -104,7 +123,7 @@ exports.acceptParticipant = async (participantId, ownerId) => {
     participantId,
     "ACCEPTED"
   );
- // Notify the person who joined
+  // Notify the person who joined
   await notificationHelper.notifyParticipantAccepted(
     participant.user_id,
     post.id,
@@ -113,7 +132,7 @@ exports.acceptParticipant = async (participantId, ownerId) => {
 
   return updatedParticipant;
 
-  
+
 };
 
 
